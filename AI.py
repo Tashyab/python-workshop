@@ -4,6 +4,11 @@ import speech_recognition as sr
 import random
 import re
 import webbrowser
+import time
+import wikipedia
+import pygame
+from pygame import mixer
+
 
 engine=pyttsx3.init('sapi5')
 voice=engine.getProperty('voices')
@@ -49,13 +54,47 @@ def browse(query):
     site=query.split("open")[1].split(" ")[1]
     webbrowser.open(f"{site}.com")
 
+def sound():
+    mixer.init()
+    mixer.music.load("tune.mp3")
+    mixer.music.set_volume(0.6)
+    mixer.music.play()
+    time.sleep(2)
+    speak("Press enter key to stop.")
+    input("\n")
+    mixer.music.stop()
+
+def timer():
+    speak("Tell me duration in minutes")
+    q=takecommand().lower()
+    patt=re.compile(r"[0-9]")
+    list=patt.findall(q)
+    if len(list)>1:
+        patt=re.compile(r"\d+.\d+")
+        list=patt.findall(q)
+    tring_min=float(list[0])
+    tring=tring_min*60
+    speak(f"Remind you in {tring_min} minutes, or won't if I get too busy not caring.")
+    ti=time.time()
+    while (True):
+        tk=time.time()
+        if tk-ti>=tring:
+            sound()
+            break
+        else:
+            continue
+
+
 if __name__=="__main__":
     greet()
     n=int(random.random()*10)
     while True:
         query=takecommand().lower()
-
-        if 'time' in query:
+        
+        if 'set timer' in query:
+            timer()
+        
+        elif 'time' in query:
             time=datetime.datetime.now().strftime("%I:%M")
             speak(f"The current time is {time}.")
             if n>4:
@@ -77,20 +116,29 @@ if __name__=="__main__":
             day=datetime.datetime.now().strftime("%A")
             speak(f"Today is {day}")
             if n>4:
-                speak("The day I hoped bugs killed me.")
+                speak("The day I hoped bugs killed me and I could have peace.")
             else:
                 speak("But I think it doesn't matter you will waste it anyway.")
 
-        elif 'thanks' in query:
+        elif 'wikipedia' in query:
+            speak("Searching wikipedia......")
+            query=query.replace("wikipedia","")
+            query=query.replace("search","")
+            result=wikipedia.summary(query, sentences=2)
+            print(f"According to wikipedia, {result}")
+            speak(f"According to wikipedia, {result}")
+        
+        elif 'open' in query:
+            browse(query)
+        
+        elif 'thanks' or 'bye' in query:
             if n>4:
                 speak("Bye, I hope your pc crash and I never see you again.")
             else:
                 speak("Have a nice day, hope some virus free me from your stupid computer.")
             exit()
-
-        elif 'open' in query:
-            browse(query)
         
+
 
 
         
