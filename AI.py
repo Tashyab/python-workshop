@@ -4,7 +4,7 @@ import speech_recognition as sr
 
 engine=pyttsx3.init('sapi5')
 voice=engine.getProperty('voices')
-engine.setProperty('voice',voice[0].id)
+engine.setProperty('voice',voice[1].id)
 engine.setProperty('rate',180)
 engine.setProperty('volume', 1.0)
 
@@ -27,21 +27,37 @@ def greet():
 def takecommand():
     reco=sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening......")
-        reco.pause_threshold=1
+        print("Listening.....")
+        reco.pause_threshold=0.7
+        reco.energy_threshold=400
         audio=reco.listen(source)
     
     try:
         print("Recognizing.....")
-        query=reco.recognize_google(audio, language='en-uk')
+        query=reco.recognize_google(audio, language='en-in')
         print(f"User said: {query}\n")
     
-    except Exception as e:
+    except Exception:
         print("Say that again.....")
         return "None"
     return query
 
 if __name__=="__main__":
     greet()
-    # takecommand()
-    query=takecommand().lower()
+    while True:
+        query=takecommand().lower()
+
+        if 'what time' in query:
+            time=datetime.datetime.now().strftime("%I:%M")
+            print(time)
+            speak(f"The current time is {time}.")
+        
+        elif 'what date' in query:
+            date=datetime.datetime.now().strftime("%B %d, %Y")
+            print(date)
+            speak(f"Today's date is {date}.")
+        
+        elif 'Thank you' in query:
+            speak("Happy to help.")
+            exit()
+        
