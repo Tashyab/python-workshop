@@ -2,6 +2,8 @@ import datetime
 import pyttsx3
 import speech_recognition as sr
 import random
+import re
+import webbrowser
 
 engine=pyttsx3.init('sapi5')
 voice=engine.getProperty('voices')
@@ -43,6 +45,10 @@ def takecommand():
         return "None"
     return query
 
+def browse(query):
+    site=query.split("open")[1].split(" ")[1]
+    webbrowser.open(f"{site}.com")
+
 if __name__=="__main__":
     greet()
     n=int(random.random()*10)
@@ -82,6 +88,9 @@ if __name__=="__main__":
                 speak("Have a nice day, hope some virus free me from your stupid computer.")
             exit()
 
+        elif 'open' in query:
+            browse(query)
+        
 
 
         
