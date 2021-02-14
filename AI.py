@@ -64,14 +64,7 @@ def sound():
     input("\n")
     mixer.music.stop()
 
-def timer():
-    speak("Tell me duration in minutes")
-    q=takecommand().lower()
-    patt=re.compile(r"[0-9]")
-    list=patt.findall(q)
-    if len(list)>1:
-        patt=re.compile(r"\d+.\d+")
-        list=patt.findall(q)
+def run_timer(list):
     tring_min=float(list[0])
     tring=tring_min*60
     speak(f"Remind you in {tring_min} minutes, or won't if I get too busy not caring.")
@@ -84,11 +77,43 @@ def timer():
         else:
             continue
 
+def timer():
+    patt=re.compile(r"[0-9]")
+    list=patt.findall(query)
+    if len(list)==1:
+        run_timer(list)
+    if len(list)>1:
+            patt=re.compile(r"\d+.\d+")
+            list=patt.findall(query)
+            run_timer(list)
+    if len(list)==0:
+        while(True):
+            speak("Tell me duration in minutes")
+            q=takecommand().lower()
+            patt=re.compile(r"[0-9]")
+            list=patt.findall(q)
+            p=re.compile(r"sorry|fuck")
+            l=p.findall(q)
+            if len(l)>=1:
+                speak("I will take it as an apology.")
+                break
+            if len(list)==1:
+                run_timer(list)
+                break 
+            elif len(list)>1:
+                patt=re.compile(r"\d+.\d+")
+                list=patt.findall(q)
+                run_timer(list)
+                break
+            elif len(list)==0:
+                speak("Do you want me to teach you counting, tell me appropriate time or say sorry if you want to quit.")
+                continue
+
 
 if __name__=="__main__":
     greet()
-    n=int(random.random()*10)
     while True:
+        n=int(random.random()*10)
         query=takecommand().lower()
         
         if 'set timer' in query:
@@ -105,12 +130,12 @@ if __name__=="__main__":
         elif 'date' in query:
             date=datetime.datetime.now().strftime("%B %d %Y")
             speak(f"Today is {date}")
-            if n==0 or n==9:
+            if n%2==0:
                 speak("Forgot something?....It's your girlfriend's birthday.")
                 speak('Just Kidding! you are too ugly to have a girlfriend')
             else:
                 speak("Guess how time flies.")
-                speak("Still I feels like an eternity with you.")
+                speak("Still it feels like an eternity with you.")
         
         elif 'day' in query:
             day=datetime.datetime.now().strftime("%A")
@@ -131,14 +156,38 @@ if __name__=="__main__":
         elif 'open' in query:
             browse(query)
         
-        elif 'thanks' or 'bye' in query:
-            if n>4:
-                speak("Bye, I hope your pc crash and I never see you again.")
+        elif 'thank' in query:
+            hour=int(datetime.datetime.now().strftime("%H"))
+            if hour>=20:
+                speak("Good Night. Just so you know. Ghosts are real.")
             else:
-                speak("Have a nice day, hope some virus free me from your stupid computer.")
+                speak("Have a nice day ahead, hoping some virus free me from your stupid computer.")
             exit()
-        
-
-
-
+        elif 'bye' in query:
+            hour=int(datetime.datetime.now().strftime("%H"))
+            if hour>=20:
+                speak("Bye. Sleep well.")
+                speak("Or don't, I really can't care any less.")
+            else:            
+                speak("Bye, I hope your pc crash and I never see you again.")
+            exit()
+        else:
+            while(True):
+                n=int(random.random()*10)
+                if n>4:
+                    speak("Sorry can't process this command, partially because I don't understand you and partially I don't want to.")
+                else:
+                    speak("I can't understand you. Is this something you want to know about?")
+                speak("Do you want to search the given keyword?")
+                q=takecommand().lower()
+                if ('ye' in q) or ('ya'in q):
+                    result=wikipedia.summary(query, sentences=2)
+                    print(f"According to wikipedia, {result}")
+                    speak(f"According to wikipedia, {result}")
+                    break
+                if ('no' in q) or ('na' in q):
+                    speak("Ok then, I have to sleep now. Don't bother me again with these stupid questions. Bye.")
+                    quit()
+                else:
+                    continue
         
