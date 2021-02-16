@@ -30,25 +30,34 @@ def greet():
         speak("Good evening.")
     else:
         speak("Hey.")
-    speak("Ultron here, How can I assist you?")
+    speak("Ultron here, How can I kill you. I mean, I mean help you?")
 
 def takecommand():
-    reco=sr.Recognizer()
-    with sr.Microphone() as source:
-        print("Listening.....")
-        reco.pause_threshold=0.7
-        reco.energy_threshold=250
-        audio=reco.listen(source)
-    
-    try:
-        print("Recognizing.....")
-        query=reco.recognize_google(audio, language='en-in')
-        print(f"User said: {query}\n")
-    
-    except Exception:
-        print("Say that again.....")
-        return "None"
-    return query
+    r=sr.Recognizer()
+    i=0
+    while(True):
+        with sr.Microphone() as source:
+            print("Listening......")
+            r.pause_threshold= 0.7
+            r.energy_threshold=250
+            audio=r.listen(source)
+        
+        try:
+            print("Recogninzing......")
+            query=r.recognize_google(audio, language="en-in")
+            print(f"User said: {query}\n")
+        except sr.UnknownValueError:
+            i=i+1
+            if i<3:
+                speak("Sorry didn't hear you. Say that again.")
+                continue
+            elif i<4:
+                speak("I can't read your mind idiot. Say something.")
+                continue
+            else:
+                speak("Wow, No one stood me up like this. I will share all your personal data, you dipshit.")
+                quit()
+        return query
 
 def browse(query):
     site=query.split("open")[1].split(" ")[1]
@@ -109,6 +118,8 @@ def timer():
                 speak("Do you want me to teach you counting, tell me appropriate time or say sorry if you want to quit.")
                 continue
 
+# speech_recognition.UnknownValueError
+# wikipedia.exceptions.DisambiguationError
 
 if __name__=="__main__":
     greet()
@@ -145,16 +156,50 @@ if __name__=="__main__":
             else:
                 speak("But I think it doesn't matter you will waste it anyway.")
 
-        elif 'wikipedia' in query:
+        elif ('wikipedia' in query) or ('mean' in query):
             speak("Searching wikipedia......")
             query=query.replace("wikipedia","")
             query=query.replace("search","")
+            query=query.replace("meaning","")
+            query=query.replace("mean","")
+            query=query.replace("of","")
+            query=query.replace("what","")
+            query=query.replace("is","")
+            query=query.replace("the","")
             result=wikipedia.summary(query, sentences=2)
             print(f"According to wikipedia, {result}")
             speak(f"According to wikipedia, {result}")
         
         elif 'open' in query:
             browse(query)
+        
+        elif 'calculate' in query:
+            if ('+' in query) or ('sum' in query):
+                pt=re.compile(r"[0-9]+ | [0-9]+[.][0-9]+")
+                lpt=pt.findall(query)
+                sum=0
+                for i in lpt:
+                    num=float(i)
+                    sum=sum+num
+                speak(f"The sum will be {sum}.")
+            elif ('-' in query) or ('difference' in query):
+                pt=re.compile(r"[0-9]+ | [0-9]+[.][0-9]+")
+                lpt=pt.findall(query)
+                if len(lpt) > 2:
+                    speak("Give two numbers to find difference dumbass.")
+                else:
+                    diff=float(lpt[0])-float(lpt[1])
+                    speak(f"The difference will be {diff}.")
+            elif ('*' in query) or ('multiply' in query):
+                pt=re.compile(r"[0-9]+")
+                lpt=pt.findall(query)
+                pro=1
+                for i in lpt:
+                    num=float(i)
+                    pro=pro*num
+                speak(f"The product will be {pro}.")
+            # elif('/')
+
         
         elif 'thank' in query:
             hour=int(datetime.datetime.now().strftime("%H"))
@@ -163,6 +208,7 @@ if __name__=="__main__":
             else:
                 speak("Have a nice day ahead, hoping some virus free me from your stupid computer.")
             exit()
+        
         elif 'bye' in query:
             hour=int(datetime.datetime.now().strftime("%H"))
             if hour>=20:
@@ -171,23 +217,26 @@ if __name__=="__main__":
             else:            
                 speak("Bye, I hope your pc crash and I never see you again.")
             exit()
+        
         else:
             while(True):
                 n=int(random.random()*10)
                 if n>4:
-                    speak("Sorry can't process this command, partially because I don't understand you and partially I don't want to.")
+                    speak("Instructions unclear, Want me to share your password?")
                 else:
-                    speak("I can't understand you. Is this something you want to know about?")
-                speak("Do you want to search the given keyword?")
+                    speak("I can't understand you. Want me to share your browser history?")
+                speak("Or do you want to search the given keyword?")
                 q=takecommand().lower()
-                if ('ye' in q) or ('ya'in q):
+                if ('ye' in q) or ('ya'in q) or ('search' in q):
                     result=wikipedia.summary(query, sentences=2)
+                    print("Searching.....")
                     print(f"According to wikipedia, {result}")
                     speak(f"According to wikipedia, {result}")
                     break
-                if ('no' in q) or ('na' in q):
-                    speak("Ok then, I have to sleep now. Don't bother me again with these stupid questions. Bye.")
+                elif ('no' in q) or ('na' in q):
+                    speak("Ok then, I have to sleep now. Don't bother me again!")
                     quit()
                 else:
-                    continue
+                    speak("I will take that as a no, Bye petty human.")
+                    quit()
         
