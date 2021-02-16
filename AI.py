@@ -8,7 +8,7 @@ import time
 import wikipedia
 import pygame
 from pygame import mixer
-
+import math
 
 engine=pyttsx3.init('sapi5')
 voice=engine.getProperty('voices')
@@ -30,7 +30,7 @@ def greet():
         speak("Good evening.")
     else:
         speak("Hey.")
-    speak("Ultron here, How can I kill you. I mean, I mean help you?")
+    # speak("Ultron here, How can I kill you. I mean, I mean help you?")
 
 def takecommand():
     r=sr.Recognizer()
@@ -118,6 +118,53 @@ def timer():
                 speak("Do you want me to teach you counting, tell me appropriate time or say sorry if you want to quit.")
                 continue
 
+def calculator():
+    if ('+' in query) or ('sum' in query) or ('add' in query):
+        pt=re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
+        lpt=pt.findall(query)
+        sum=0
+        for i in lpt:
+            num=float(i)
+            sum=sum+num
+        speak(f"The sum will be {sum}.")
+        print(f"The sum will be {sum}.")
+    
+    elif ('-' in query) or ('difference' in query):
+        pt=re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
+        lpt=pt.findall(query)
+        diff=0
+        for i in lpt:
+            num=float(i)
+            diff=diff-num
+        diff=diff+(2*float(lpt[0]))
+        diff=round(diff,4)
+        speak(f"The difference will be {diff}.")
+        print(f"The difference will be {diff}.")
+    
+    elif ('*' in query) or ('multi' in query) or ('into' in query):
+        pt=re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
+        lpt=pt.findall(query)
+        pro=1
+        for i in lpt:
+            num=float(i)
+            pro=pro*num
+        speak(f"The product will be {pro}.")
+        print(f"The product will be {pro}.")
+    
+    elif ('/' in query) or ('divide' in query):
+        pt=re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
+        lpt=pt.findall(query)
+        if len(lpt)==2:
+            div=(float(lpt[0]))/(float(lpt[1]))
+            div=round(div,4)
+            quo=int((float(lpt[0]))/(float(lpt[1])))
+            rem=int((float(lpt[0]))%(float(lpt[1])))
+            speak(f"The result is {div}.\nQuotient={quo} and Remainder={rem}.")
+            print(f"The result is {div}.\nQuotient={quo} and Remainder={rem}.")  
+        else:
+            speak("Provide only two numbers, The dividend and the divisor.")
+        
+
 # speech_recognition.UnknownValueError
 # wikipedia.exceptions.DisambiguationError
 
@@ -173,34 +220,9 @@ if __name__=="__main__":
         elif 'open' in query:
             browse(query)
         
-        elif 'calculate' in query:
-            if ('+' in query) or ('sum' in query):
-                pt=re.compile(r"[0-9]+ | [0-9]+[.][0-9]+")
-                lpt=pt.findall(query)
-                sum=0
-                for i in lpt:
-                    num=float(i)
-                    sum=sum+num
-                speak(f"The sum will be {sum}.")
-            elif ('-' in query) or ('difference' in query):
-                pt=re.compile(r"[0-9]+ | [0-9]+[.][0-9]+")
-                lpt=pt.findall(query)
-                if len(lpt) > 2:
-                    speak("Give two numbers to find difference dumbass.")
-                else:
-                    diff=float(lpt[0])-float(lpt[1])
-                    speak(f"The difference will be {diff}.")
-            elif ('*' in query) or ('multiply' in query):
-                pt=re.compile(r"[0-9]+")
-                lpt=pt.findall(query)
-                pro=1
-                for i in lpt:
-                    num=float(i)
-                    pro=pro*num
-                speak(f"The product will be {pro}.")
-            # elif('/')
+        elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('substract' in query) or ('divide' in query):
+            calculator()
 
-        
         elif 'thank' in query:
             hour=int(datetime.datetime.now().strftime("%H"))
             if hour>=20:
