@@ -9,6 +9,7 @@ import wikipedia
 import pygame
 from pygame import mixer
 import math
+import os
 
 engine=pyttsx3.init('sapi5')
 voice=engine.getProperty('voices')
@@ -60,8 +61,25 @@ def takecommand():
         return query
 
 def browse(query):
-    site=query.split("open")[1].split(" ")[1]
-    webbrowser.open(f"{site}.com")
+    if 'code blocks' in query:
+        path="C:\\Program Files\\CodeBlocks\\codeblocks.exe"
+        os.startfile(path)
+    elif ('python' in query) or ('pycharm' in query):
+        path="C:\\Program Files\\JetBrains\\PyCharm Community Edition 2020.2.3\\bin\\pycharm64.exe"
+        os.startfile(path)
+    elif 'code' in query:
+        path="C:\\Users\\VIP\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
+        os.startfile(path)
+    elif 'discord' in query:
+        path="C:\\Users\\VIP\\AppData\\Local\\Discord\\app-0.0.309\\Discord.exe"
+        os.startfile(path)
+    elif 'notepad' in query:
+        path="C:\\Users\\VIP\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Accessories\\Notepad"
+        os.startfile(path)
+    else: 
+        site=query.split("open")[1].split(" ")[1]
+        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+        webbrowser.get('chrome').open(f"{site}.com")
 
 def sound():
     mixer.init()
@@ -74,9 +92,16 @@ def sound():
     mixer.music.stop()
 
 def run_timer(list):
-    tring_min=float(list[0])
-    tring=tring_min*60
-    speak(f"Remind you in {tring_min} minutes, or won't if I get too busy not caring.")
+    tring_time=float(list[0])
+    if 'minute' in query:
+        tring=tring_time*60
+        speak(f"Remind you in {tring_time} minutes, or won't if I get too busy not caring.")
+    elif 'second' in query:
+        tring=tring_time
+        speak(f"Remind you in {tring_time} seconds, or won't if I get too busy not caring.")
+    elif 'hour' in query:
+        tring=tring_time*3600
+        speak(f"Remind you in {tring_time} hours, or won't if I get too busy not caring.")
     ti=time.time()
     while (True):
         tk=time.time()
@@ -163,7 +188,22 @@ def calculator():
             print(f"The result is {div}.\nQuotient={quo} and Remainder={rem}.")  
         else:
             speak("Provide only two numbers, The dividend and the divisor.")
-        
+
+def wiki(query):
+    speak("Searching, please wait......")
+    query=query.replace("wikipedia","")
+    query=query.replace("search","")
+    query=query.replace("meaning","")
+    query=query.replace("mean","")
+    query=query.replace("of","")
+    query=query.replace("what","")
+    query=query.replace("do","")
+    query=query.replace("you","")
+    query=query.replace("is","")
+    query=query.replace("the","")
+    result=wikipedia.summary(query, sentences=2)
+    print(f"According to wikipedia, {result}")
+    speak(f"According to wikipedia, {result}")        
 
 # speech_recognition.UnknownValueError
 # wikipedia.exceptions.DisambiguationError
@@ -203,22 +243,12 @@ if __name__=="__main__":
             else:
                 speak("But I think it doesn't matter you will waste it anyway.")
 
-        elif ('wikipedia' in query) or ('mean' in query):
-            speak("Searching wikipedia......")
-            query=query.replace("wikipedia","")
-            query=query.replace("search","")
-            query=query.replace("meaning","")
-            query=query.replace("mean","")
-            query=query.replace("of","")
-            query=query.replace("what","")
-            query=query.replace("is","")
-            query=query.replace("the","")
-            result=wikipedia.summary(query, sentences=2)
-            print(f"According to wikipedia, {result}")
-            speak(f"According to wikipedia, {result}")
+        elif ('wikipedia' in query) or ('mean' in query) or ('search' in query):
+            wiki(query)        
         
         elif 'open' in query:
             browse(query)
+            exit()
         
         elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('substract' in query) or ('divide' in query):
             calculator()
@@ -237,7 +267,7 @@ if __name__=="__main__":
                 speak("Bye. Sleep well.")
                 speak("Or don't, I really can't care any less.")
             else:            
-                speak("Bye, I hope your pc crash and I never see you again.")
+                speak("Bye, I hope your pc crashes and I never see you again.")
             exit()
         
         else:
@@ -250,15 +280,12 @@ if __name__=="__main__":
                 speak("Or do you want to search the given keyword?")
                 q=takecommand().lower()
                 if ('ye' in q) or ('ya'in q) or ('search' in q):
-                    result=wikipedia.summary(query, sentences=2)
-                    print("Searching.....")
-                    print(f"According to wikipedia, {result}")
-                    speak(f"According to wikipedia, {result}")
+                    wiki(query)
                     break
                 elif ('no' in q) or ('na' in q):
                     speak("Ok then, I have to sleep now. Don't bother me again!")
                     quit()
                 else:
-                    speak("I will take that as a no, Bye petty human.")
+                    speak("I will take that as a no, you petty human.")
                     quit()
         
