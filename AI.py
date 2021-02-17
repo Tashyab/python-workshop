@@ -64,22 +64,28 @@ def browse(query):
     if 'code blocks' in query:
         path="C:\\Program Files\\CodeBlocks\\codeblocks.exe"
         os.startfile(path)
+        exit()
     elif ('python' in query) or ('pycharm' in query):
         path="C:\\Program Files\\JetBrains\\PyCharm Community Edition 2020.2.3\\bin\\pycharm64.exe"
         os.startfile(path)
+        exit()
     elif 'code' in query:
         path="C:\\Users\\VIP\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
         os.startfile(path)
+        exit()
     elif 'discord' in query:
         path="C:\\Users\\VIP\\AppData\\Local\\Discord\\app-0.0.309\\Discord.exe"
         os.startfile(path)
+        exit()
     elif 'notepad' in query:
         path="C:\\Users\\VIP\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Accessories\\Notepad"
         os.startfile(path)
+        exit()
     else: 
         site=query.split("open")[1].split(" ")[1]
         webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
         webbrowser.get('chrome').open(f"{site}.com")
+        exit()
 
 def sound():
     mixer.init()
@@ -243,11 +249,18 @@ if __name__=="__main__":
             else:
                 speak("But I think it doesn't matter you will waste it anyway.")
 
-        elif ('wikipedia' in query) or ('mean' in query) or ('search' in query):
+        elif ('wikipedia' in query):
             wiki(query)        
         
         elif 'open' in query:
             browse(query)
+            exit()
+        
+        elif 'search' in query:
+            query=query.replace("search ", "")
+            query=query.replace(" ","+")
+            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+            webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
             exit()
         
         elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('substract' in query) or ('divide' in query):
@@ -279,12 +292,18 @@ if __name__=="__main__":
                     speak("I can't understand you. Want me to share your browser history?")
                 speak("Or do you want to search the given keyword?")
                 q=takecommand().lower()
-                if ('ye' in q) or ('ya'in q) or ('search' in q):
-                    wiki(query)
-                    break
+                if ('ye' in q) or ('ya'in q):
+                    speak("Ok, the next time you see some unwanted cringy ads, remember me.")
+                    exit()
+                elif 'search' in q:
+                    query=query.replace("search", "")
+                    query=query.replace(" ","+")
+                    webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+                    webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
+                    exit()
                 elif ('no' in q) or ('na' in q):
                     speak("Ok then, I have to sleep now. Don't bother me again!")
-                    quit()
+                    exit()
                 else:
                     speak("I will take that as a no, you petty human.")
                     quit()
