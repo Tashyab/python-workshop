@@ -1,1 +1,2 @@
-AI.py <under work>
+AI.py
+mygame.py <under work>
