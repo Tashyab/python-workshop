@@ -10,6 +10,7 @@ import pygame
 from pygame import mixer
 import math
 import os
+import smtplib
 
 engine=pyttsx3.init('sapi5')
 voice=engine.getProperty('voices')
@@ -31,7 +32,7 @@ def greet():
         speak("Good evening.")
     else:
         speak("Hey.")
-    # speak("Ultron here, How can I kill you. I mean, I mean help you?")
+    speak("Ultron here, How can I kill you. I mean, I mean help you?")
 
 def takecommand():
     r=sr.Recognizer()
@@ -118,7 +119,7 @@ def run_timer(list):
             continue
 
 def timer():
-    patt=re.compile(r"[0-9]")
+    patt=re.compile(r"[0-9]+")
     list=patt.findall(query)
     if len(list)==1:
         run_timer(list)
@@ -130,7 +131,7 @@ def timer():
         while(True):
             speak("Tell me duration in minutes")
             q=takecommand().lower()
-            patt=re.compile(r"[0-9]")
+            patt=re.compile(r"[0-9]+")
             list=patt.findall(q)
             p=re.compile(r"sorry|fuck")
             l=p.findall(q)
@@ -211,6 +212,27 @@ def wiki(query):
     print(f"According to wikipedia, {result}")
     speak(f"According to wikipedia, {result}")        
 
+def sendmail():
+    speak("Enter your email")
+    print("Before entering your email make sure to allow less secure to apps use your account.\n"
+    "| Go to your account > Security > Toggle to allow less secue apps |")
+    print("Enter your email:")
+    sender_email=input()
+    speak("Enter your password")
+    print("Enter your password:")
+    sender_password=input()
+    speak("Whom to send the mail, Tell me the email address.")
+    print("Sender's email address:")
+    to=input()
+    speak("What should I say?")
+    cont=takecommand()
+    server=smtplib.SMTP('smtp.gmail.com',587)
+    server.ehlo()
+    server.starttls()
+    server.login(sender_email, sender_password)
+    server.sendmail(sender_email, to, cont)
+    server.close()
+
 # speech_recognition.UnknownValueError
 # wikipedia.exceptions.DisambiguationError
 
@@ -223,6 +245,20 @@ if __name__=="__main__":
         if 'set timer' in query:
             timer()
         
+        elif 'search' in query:
+            query=query.replace("search ", "")
+            query=query.replace(" ","+")
+            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+            webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
+            exit()
+        
+        elif ('send mail' in query) or ('send email' in query) or ('send gmail' in query):
+            try:
+                sendmail()
+                speak("Mail sent successfully.")  
+            except Exception:
+                speak("Sorry can't send the mail.")
+
         elif 'time' in query:
             time=datetime.datetime.now().strftime("%I:%M")
             speak(f"The current time is {time}.")
@@ -255,14 +291,7 @@ if __name__=="__main__":
         elif 'open' in query:
             browse(query)
             exit()
-        
-        elif 'search' in query:
-            query=query.replace("search ", "")
-            query=query.replace(" ","+")
-            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
-            webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
-            exit()
-        
+               
         elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('substract' in query) or ('divide' in query):
             calculator()
 
