@@ -286,8 +286,11 @@ if __name__=="__main__":
                 speak("But I think it doesn't matter you will waste it anyway.")
 
         elif ('wikipedia' in query):
-            wiki(query)        
-        
+            try:
+                wiki(query)        
+            except Exception:
+                speak("Can't find this on wikipedia right now.")
+
         elif 'open' in query:
             browse(query)
             exit()
@@ -313,27 +316,25 @@ if __name__=="__main__":
             exit()
         
         else:
-            while(True):
-                n=int(random.random()*10)
-                if n>4:
-                    speak("Instructions unclear, Want me to share your password?")
-                else:
-                    speak("I can't understand you. Want me to share your browser history?")
-                speak("Or do you want to search the given keyword?")
-                q=takecommand().lower()
-                if ('ye' in q) or ('ya'in q):
-                    speak("Ok, the next time you see some unwanted cringy ads, remember me.")
-                    exit()
-                elif 'search' in q:
-                    query=query.replace("search", "")
-                    query=query.replace(" ","+")
-                    webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
-                    webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
-                    exit()
-                elif ('no' in q) or ('na' in q):
-                    speak("Ok then, I have to sleep now. Don't bother me again!")
-                    exit()
-                else:
-                    speak("I will take that as a no, you petty human.")
-                    quit()
+            if n>4:
+                speak("Instructions unclear, Want me to share your password?")
+            else:
+                speak("I can't understand you. Want me to share your browser history?")
+            speak("Or do you want to search the given keyword?")
+            q=takecommand().lower()
+            if ('ye' in q) or ('ya'in q):
+                speak("Ok, the next time you see some unwanted cringy ads, remember me.")
+                exit()
+            elif 'search' in q:
+                query=query.replace("search", "")
+                query=query.replace(" ","+")
+                webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+                webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
+                exit()
+            elif ('no' in q) or ('na' in q):
+                speak("Ok then, I have to sleep now. Don't bother me again!")
+                exit()
+            else:
+                speak("I will take that as a no, you petty human.")
+                quit()
         
