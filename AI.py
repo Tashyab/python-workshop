@@ -11,6 +11,9 @@ from pygame import mixer
 import math
 import os
 import smtplib
+import json
+import requests as req
+import pickle
 
 engine=pyttsx3.init('sapi5')
 voice=engine.getProperty('voices')
@@ -61,32 +64,10 @@ def takecommand():
                 quit()
         return query
 
-def browse(query):
-    if 'code blocks' in query:
-        path="C:\\Program Files\\CodeBlocks\\codeblocks.exe"
-        os.startfile(path)
-        exit()
-    elif ('python' in query) or ('pycharm' in query):
-        path="C:\\Program Files\\JetBrains\\PyCharm Community Edition 2020.2.3\\bin\\pycharm64.exe"
-        os.startfile(path)
-        exit()
-    elif 'code' in query:
-        path="C:\\Users\\VIP\\AppData\\Local\\Programs\\Microsoft VS Code\\Code.exe"
-        os.startfile(path)
-        exit()
-    elif 'discord' in query:
-        path="C:\\Users\\VIP\\AppData\\Local\\Discord\\app-0.0.309\\Discord.exe"
-        os.startfile(path)
-        exit()
-    elif 'notepad' in query:
-        path="C:\\Users\\VIP\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Accessories\\Notepad"
-        os.startfile(path)
-        exit()
-    else: 
-        site=query.split("open")[1].split(" ")[1]
-        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
-        webbrowser.get('chrome').open(f"{site}.com")
-        exit()
+def filestarter(key):
+    path=f"C:\\Users\\VIP\\Desktop\\{key}"
+    os.startfile(path)
+    exit()
 
 def sound():
     mixer.init()
@@ -233,6 +214,42 @@ def sendmail():
     server.sendmail(sender_email, to, cont)
     server.close()
 
+def start(pr):
+    i = 0
+    while (i < len(pr['articles'])):
+        for key in [*pr['articles'][i]]:
+            if key == 'title':
+                print(pr['articles'][i]['title'])
+                speak(pr['articles'][i]['title'])
+                time.sleep(1)
+        i += 1
+    speak("That's all from today's headlines. Hope your knowledge of current affairs improves.")
+
+def news(query):
+    speak("Which headlines would you like to hear? Top Headlines, Sports, Entertainment, or Business")
+    q=takecommand().lower()
+    try:
+        if "top" in q:
+            r=req.get("http://newsapi.org/v2/top-headlines?country=in&apiKey=aff4be3b07634fe2ab1da4f0e0db241f")
+            pr=json.loads(r.text)
+            start(pr)
+        elif "sports" in q:
+            r = req.get("http://newsapi.org/v2/top-headlines?country=in&category=sports&apiKey=aff4be3b07634fe2ab1da4f0e0db241f")
+            pr = json.loads(r.text)
+            start(pr)
+        elif 'entertainment' in q:
+            r = req.get("http://newsapi.org/v2/top-headlines?country=in&category=entertainment&apiKey=aff4be3b07634fe2ab1da4f0e0db241f")
+            pr = json.loads(r.text)
+            start(pr)
+        elif 'business' in q:
+            r = req.get("http://newsapi.org/v2/top-headlines?country=in&category=business&apiKey=aff4be3b07634fe2ab1da4f0e0db241f")
+            pr = json.loads(r.text)
+            start(pr)
+        else:
+            speak("Not a valid choice.")
+    except Exception:
+        speak("Can't get the headlines, try again later.")
+
 # speech_recognition.UnknownValueError
 # wikipedia.exceptions.DisambiguationError
 
@@ -245,6 +262,9 @@ if __name__=="__main__":
         if 'set timer' in query:
             timer()
         
+        elif ('news' in query) or ('headline' in query):
+            news(query)
+
         elif 'search' in query:
             query=query.replace("search ", "")
             query=query.replace(" ","+")
@@ -292,9 +312,30 @@ if __name__=="__main__":
                 speak("Can't find this on wikipedia right now.")
 
         elif 'open' in query:
-            browse(query)
-            exit()
-               
+            try:
+                if 'code blocks' in query:
+                    filestarter("CodeBlocks")
+                elif ('python' in query):
+                    filestarter("PyCharm")
+                elif 'code' in query:
+                    filestarter("Visual Studio Code")
+                elif 'discord' in query:
+                    filestarter("Discord")
+                elif 'notepad' in query:
+                    filestarter("Notepad")
+                elif 'chrome' in query:
+                    filestarter("Chrome")
+                try: 
+                    site=query.split("open")[1].split(" ")[1]
+                    webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+                    webbrowser.get('chrome').open(f"{site}.com")
+                    exit()
+                except Exception:
+                    speak("I can't open blank, you dumb person. Tell me what to open.")
+                    speak("Or I will open the profile you usually stalk. Yeah. I know everything.")
+            except Exception:
+                speak("File path not correct or specified. Copy a shortcut on Desktop first.")
+                           
         elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('substract' in query) or ('divide' in query):
             calculator()
 
