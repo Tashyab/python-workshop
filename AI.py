@@ -61,11 +61,14 @@ def takecommand():
                 continue
             else:
                 speak("Wow, No one stood me up like this. I will share all your personal data, you dipshit.")
+                speak("Ok, the next time you see some unwanted cringy ads, remember me.")
                 quit()
         return query
 
 def filestarter(key):
     path=f"C:\\Users\\VIP\\Desktop\\{key}"
+    speak(f"Opening {key}....")
+    print(f"Opening {key}....\n")
     os.startfile(path)
     exit()
 
@@ -79,17 +82,21 @@ def sound():
     input("\n")
     mixer.music.stop()
 
-def run_timer(list):
+def run_timer(list, q):
     tring_time=float(list[0])
-    if 'minute' in query:
+    if ('minute' in query) or ('minute' in q):
         tring=tring_time*60
         speak(f"Remind you in {tring_time} minutes, or won't if I get too busy not caring.")
-    elif 'second' in query:
+    elif ('second' in query) or ('second' in q):
         tring=tring_time
         speak(f"Remind you in {tring_time} seconds, or won't if I get too busy not caring.")
-    elif 'hour' in query:
+    elif ('hour' in query) or ('hour' in q):
         tring=tring_time*3600
         speak(f"Remind you in {tring_time} hours, or won't if I get too busy not caring.")
+    else:
+        speak("Standard time unit not provided. Setting timer in seconds.")
+        tring=tring_time
+        speak(f"Remind you in {tring_time} seconds, or won't if I get too busy not caring.")
     ti=time.time()
     while (True):
         tk=time.time()
@@ -103,34 +110,35 @@ def timer():
     patt=re.compile(r"[0-9]+")
     list=patt.findall(query)
     if len(list)==1:
-        run_timer(list)
+        run_timer(list, "")
     if len(list)>1:
             patt=re.compile(r"\d+.\d+")
             list=patt.findall(query)
-            run_timer(list)
+            run_timer(list, "")
     if len(list)==0:
+        i=0
         while(True):
-            speak("Tell me duration in minutes")
+            speak("Tell me time duration.")
             q=takecommand().lower()
             patt=re.compile(r"[0-9]+")
             list=patt.findall(q)
-            p=re.compile(r"sorry|fuck")
-            l=p.findall(q)
-            if len(l)>=1:
-                speak("I will take it as an apology.")
-                break
             if len(list)==1:
-                run_timer(list)
+                run_timer(list, q)
                 break 
             elif len(list)>1:
                 patt=re.compile(r"\d+.\d+")
                 list=patt.findall(q)
-                run_timer(list)
+                run_timer(list, q)
                 break
             elif len(list)==0:
-                speak("Do you want me to teach you counting, tell me appropriate time or say sorry if you want to quit.")
-                continue
-
+                i=i+1
+                if (i==2):
+                    speak("What a moron, I am quitting.")
+                    quit()
+                else:
+                    speak("Tell me appropriate time.")
+                    continue
+                
 def calculator():
     if ('+' in query) or ('sum' in query) or ('add' in query):
         pt=re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
@@ -142,28 +150,34 @@ def calculator():
         speak(f"The sum will be {sum}.")
         print(f"The sum will be {sum}.")
     
-    elif ('-' in query) or ('difference' in query):
+    elif ('-' in query) or ('difference' in query) or ('subtract' in query):
         pt=re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
         lpt=pt.findall(query)
         diff=0
-        for i in lpt:
-            num=float(i)
-            diff=diff-num
-        diff=diff+(2*float(lpt[0]))
-        diff=round(diff,4)
-        speak(f"The difference will be {diff}.")
-        print(f"The difference will be {diff}.")
-    
+        if len(lpt)>1:
+            for i in lpt:
+                num=float(i)
+                diff=diff-num
+            diff=diff+(2*float(lpt[0]))
+            diff=round(diff,4)
+            speak(f"The difference will be {diff}.")
+            print(f"The difference will be {diff}.")
+        else:
+            speak("Provide at least two numbers and try again.")
+
+        
     elif ('*' in query) or ('multi' in query) or ('into' in query):
         pt=re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
         lpt=pt.findall(query)
         pro=1
-        for i in lpt:
-            num=float(i)
-            pro=pro*num
-        speak(f"The product will be {pro}.")
-        print(f"The product will be {pro}.")
-    
+        if len(lpt)>1:
+            for i in lpt:
+                num=float(i)
+                pro=pro*num
+            speak(f"The product will be {pro}.")
+            print(f"The product will be {pro}.")
+        else:
+            speak("Provide at least two numbers and try again.")
     elif ('/' in query) or ('divide' in query):
         pt=re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
         lpt=pt.findall(query)
@@ -176,6 +190,8 @@ def calculator():
             print(f"The result is {div}.\nQuotient={quo} and Remainder={rem}.")  
         else:
             speak("Provide only two numbers, The dividend and the divisor.")
+    else:
+        speak("Not a valid statement. Missing either the operands or the operator.")
 
 def wiki(query):
     speak("Searching, please wait......")
@@ -205,8 +221,18 @@ def sendmail():
     speak("Whom to send the mail, Tell me the email address.")
     print("Sender's email address:")
     to=input()
-    speak("What should I say?")
-    cont=takecommand()
+    while(True):
+        speak("What should I say?")
+        cont=takecommand()
+        speak("Say confirm to send the mail, anything else to write the message.")
+        call=takecommand().lower()
+        if "confirm" in call:
+            break
+        else:
+            speak("Write the message.")
+            print("Write the message.")
+            cont=input()
+            break
     server=smtplib.SMTP('smtp.gmail.com',587)
     server.ehlo()
     server.starttls()
@@ -264,14 +290,7 @@ if __name__=="__main__":
         
         elif ('news' in query) or ('headline' in query):
             news(query)
-
-        elif 'search' in query:
-            query=query.replace("search ", "")
-            query=query.replace(" ","+")
-            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
-            webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
-            exit()
-        
+      
         elif ('send mail' in query) or ('send email' in query) or ('send gmail' in query):
             try:
                 sendmail()
@@ -305,38 +324,45 @@ if __name__=="__main__":
             else:
                 speak("But I think it doesn't matter you will waste it anyway.")
 
+        elif 'open' in query:
+            try:
+                q=query.split("open ")[1]
+                filestarter(q)
+            except Exception:
+                speak("No such application on desktop. Opening manually.")
+                if 'code blocks' in query:
+                    filestarter("codeblocks")
+                elif ('python' in query):
+                    filestarter("Pycharm")
+                elif 'code' in query:
+                    filestarter("Visual Studio Code")
+                elif 'chrome' in query:
+                    filestarter("Chrome")
+                else:
+                    try:
+                        speak("Opening in browser") 
+                        site=query.split("open ")[1]
+                        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+                        webbrowser.get('chrome').open(f"{site}.com")
+                        exit()
+                    except Exception:
+                        speak("I can't open blank, you dumb person. Tell me what to open.")
+                        speak("Or I will open the profile you usually stalk. Yeah. I know everything.")
+        
         elif ('wikipedia' in query):
             try:
                 wiki(query)        
             except Exception:
-                speak("Can't find this on wikipedia right now.")
+                speak("Can't find this on wikipedia right now. Try again later.")
 
-        elif 'open' in query:
-            try:
-                if 'code blocks' in query:
-                    filestarter("CodeBlocks")
-                elif ('python' in query):
-                    filestarter("PyCharm")
-                elif 'code' in query:
-                    filestarter("Visual Studio Code")
-                elif 'discord' in query:
-                    filestarter("Discord")
-                elif 'notepad' in query:
-                    filestarter("Notepad")
-                elif 'chrome' in query:
-                    filestarter("Chrome")
-                try: 
-                    site=query.split("open")[1].split(" ")[1]
-                    webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
-                    webbrowser.get('chrome').open(f"{site}.com")
-                    exit()
-                except Exception:
-                    speak("I can't open blank, you dumb person. Tell me what to open.")
-                    speak("Or I will open the profile you usually stalk. Yeah. I know everything.")
-            except Exception:
-                speak("File path not correct or specified. Copy a shortcut on Desktop first.")
+        elif 'search' in query:
+            query=query.replace("search ", "")
+            query=query.replace(" ","+")
+            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+            webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
+            exit()
                            
-        elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('substract' in query) or ('divide' in query):
+        elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('subtract' in query) or ('divide' in query):
             calculator()
 
         elif 'thank' in query:
@@ -361,10 +387,10 @@ if __name__=="__main__":
                 speak("Instructions unclear, Want me to share your password?")
             else:
                 speak("I can't understand you. Want me to share your browser history?")
-            speak("Or do you want to search the given keyword?")
+            speak("Or If you want to search the given keyword? Say search.")
             q=takecommand().lower()
             if ('ye' in q) or ('ya'in q):
-                speak("Ok, the next time you see some unwanted cringy ads, remember me.")
+                speak("Sharing browser history and passwords to global server. Thank me later.")
                 exit()
             elif 'search' in q:
                 query=query.replace("search", "")
