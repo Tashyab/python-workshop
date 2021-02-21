@@ -133,7 +133,7 @@ def timer():
             elif len(list)==0:
                 i=i+1
                 if (i==2):
-                    speak("What a moron, I am quitting.")
+                    speak("What a moron, I can't take this anymore, bye I am quitting.")
                     quit()
                 else:
                     speak("Tell me appropriate time.")
@@ -144,11 +144,14 @@ def calculator():
         pt=re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
         lpt=pt.findall(query)
         sum=0
-        for i in lpt:
-            num=float(i)
-            sum=sum+num
-        speak(f"The sum will be {sum}.")
-        print(f"The sum will be {sum}.")
+        if len(lpt)>1:
+            for i in lpt:
+                num=float(i)
+                sum=sum+num
+            speak(f"The sum will be {sum}.")
+            print(f"The sum will be {sum}.")
+        else:
+            speak("Provide at least two numbers and try again.")
     
     elif ('-' in query) or ('difference' in query) or ('subtract' in query):
         pt=re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
