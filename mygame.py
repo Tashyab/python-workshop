@@ -11,7 +11,7 @@ GROUNDY=SC_H*0.8
 GAME_SPRITES={}
 GAME_SOUNDS={}
 PLAYER="equip/sprites/char.png"
-BACK="equip/sprites/back2.png"
+BACK="equip/sprites/background.png"
 OBSTACLE="equip/sprites/obstacle.png"
 
 def welcomeScreen():
@@ -30,8 +30,8 @@ def welcomeScreen():
                 return
             else:
                 SC.blit(GAME_SPRITES['message'],(0,0))
-                SC.blit(GAME_SPRITES['intgr'],(playerx+100,playery-100))
-                SC.blit(GAME_SPRITES['player'],(playerx+40, playery-100))
+                SC.blit(GAME_SPRITES['intch'],(playerx+220, 0))
+                SC.blit(GAME_SPRITES['intgr'],(playerx+40,playery-90))
                 SC.blit(GAME_SPRITES['intback'][0],(-10, GROUNDY-20))
                 SC.blit(GAME_SPRITES['intback'][1],(w1-40, GROUNDY-20))
                 SC.blit(GAME_SPRITES['intback'][2],(w1+w2-80, GROUNDY-20))
@@ -46,7 +46,7 @@ def mainGame():
 if __name__=="__main__":
     pygame.init()
     fpsclock=pygame.time.Clock()
-    pygame.display.set_caption("Jetpack by Tashyab's ultron")
+    pygame.display.set_caption("JETPACK PENGUIN")
     GAME_SPRITES['numbers']=(
         pygame.image.load('equip/sprites/0.png').convert_alpha(),
         pygame.image.load('equip/sprites/1.png').convert_alpha(),
@@ -70,7 +70,9 @@ if __name__=="__main__":
     GAME_SOUNDS['point']=pygame.mixer.Sound('equip/sounds/point.wav')
     GAME_SOUNDS['swoosh']=pygame.mixer.Sound('equip/sounds/swoosh.wav')
     GAME_SOUNDS['bell']=pygame.mixer.Sound('equip/sounds/bell.wav')
+    
     GAME_SPRITES['intgr']=pygame.image.load('equip/sprites/gr.png')
+    GAME_SPRITES['intch']=pygame.image.load('equip/sprites/chint.png')
     GAME_SPRITES['intback']=(
         pygame.image.load('equip/sprites/back1.png'),
         pygame.image.load('equip/sprites/back2.png'),
@@ -78,6 +80,7 @@ if __name__=="__main__":
         pygame.image.load('equip/sprites/back4.png'),
         pygame.image.load('equip/sprites/back5.png')
     )
+    
     GAME_SPRITES['background']=pygame.image.load(BACK).convert()
     GAME_SPRITES['player']=pygame.image.load(PLAYER).convert_alpha()
 
