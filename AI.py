@@ -332,7 +332,6 @@ if __name__=="__main__":
                 q=query.split("open ")[1]
                 filestarter(q)
             except Exception:
-                speak("No such application on desktop. Opening manually.")
                 if 'code blocks' in query:
                     filestarter("codeblocks")
                 elif ('python' in query):
@@ -343,6 +342,7 @@ if __name__=="__main__":
                     filestarter("Chrome")
                 else:
                     try:
+                        speak("No such application on desktop.")
                         speak("Opening in browser") 
                         site=query.split("open ")[1]
                         webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
