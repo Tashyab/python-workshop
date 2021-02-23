@@ -2,6 +2,7 @@ import sys
 import pygame
 from pygame.locals import *
 import random
+import time
 
 FPS=32
 SC_H=630
@@ -41,8 +42,9 @@ def welcomeScreen():
                 fpsclock.tick(FPS)
 
 def mainGame():
+
     score=0
-    playerx=int(SC_W/2)
+    playerx=int(SC_W/4)
     playery=int(SC_H/2)
     basex=0
 
@@ -59,13 +61,13 @@ def mainGame():
     ]
 
     pipevelx= -4
-    playervely= 9
+    playervely= -9
     playermaxvely=10
-    playerminvely=8
+    playerminvely= -8
     playeraccy=1
 
-    playerFlapvel= 8
-    playerFlapped=False
+    playerflapvel= -8
+    playerflapped=False
 
     while(True):
         for event in pygame.event.get():
@@ -74,103 +76,101 @@ def mainGame():
                 sys.exit()
             if event.type == KEYDOWN and (event.key==K_SPACE or event.key==K_UP):
                 if playery>0:
-                    playervely= playerFlapvel
-                    playerFlapped= True
+                    playervely= playerflapvel
+                    playerflapped= True
                     try:
                         GAME_SOUNDS['bell'].play()
                     except Exception:
                         pass
+            
+        crashTest=Collide(playerx, playery, upperpipes, lowerpipes)
+        if crashTest:
+            return True
+
+        playermidpos= playerx + GAME_SPRITES['player'].get_width()/2
+        for pipe in upperpipes:
+            pipemidpos=pipe['x'] + GAME_SPRITES['obstacle'][0].get_width()/2
+            if pipemidpos <= playermidpos < pipemidpos+4:
+                score+=1
+                print(f"Your score is {score}")
+                try:
+                    GAME_SOUNDS['point'].play()
+                except Exception:
+                    pass
         
-    crashTest=Collide(playerx, playery, upperpipes, lowerpipes)
-    if crashTest:
-        return
+        if playervely < playermaxvely and not playerflapped:
+            playervely+= playeraccy
+        
+        if playerflapped:
+            playerflapped=False
+        
+        playerh= GAME_SPRITES['player'].get_height()
+        playery = playery + playervely
 
-    playermidpos= playerx + GAME_SPRITES['player'][0].grt_width/2
-    for pipe in upperpipes:
-        pipemidpos=pipe['x'] + GAME_SPRITES['obstacle'][0].get_width()/2
-        if pipemidpos <= playermidpos < pipemidpos+4:
-            score+=1
-            print(f"your score is {score}")
-            try:
-                GAME_SOUNDS['point'].play()
-            except Exception:
-                pass
-    
-    if playervely < playermaxvely and not playerFlapped:
-        playervely+= playeraccy
-    
-    if playerFlapped:
-        playerFlapped=False
-    
-    playerh= GAME_SPRITES['player'].get_height()
-    playery=playery + min(playery, GROUNDY-playery-playerheight)
+        for upperpipe, lowerpipe in zip(upperpipes,lowerpipes):
+            upperpipe['x']+= pipevelx
+            lowerpipe['x']+= pipevelx
 
-    for upperpipe, lowerpipe in zip(upperpipes,lowerpipes):
-        upperpipe['x']+= pipevelx
-        lowerpipe['x']+= pipevelx
+        if 0 < upperpipes[0]['x'] <100:
+            newpipe=getRandomPipe()
+            upperpipes.append(newpipe[0])
+            lowerpipes.append(newpipe[1])
 
-    if 0 < upperpipes[0]['x'] <5:
-        newpipe=getRandomPipe()
-        upperpipes.amend(newpip[0])
-        upperpipes.amend(newpip[1])
+        if upperpipes[0]['x'] < -GAME_SPRITES['obstacle'][0].get_width():
+            upperpipes.pop(0)
+            lowerpipes.pop(0)
 
-    if upperpipes[0]['x'] < -GAME_SPRITES['obstacle'][0].get_width():
-        upperpipes.pop(0)
-        lowerpipes.pop(0)
-
-    SC.blit(GAME_SPRITES['background'], (0,0))
-    for upperpipe,lowerpipe in zip(upperpipes,lowerpipes):
-        SC.blit(GAME_SPRITES['obstacle'][0], (upperpipe['x'], upperpipe['y']))
-        SC.blit(GAME_SPRITES['obstacle'][1], (lowerpipe['x'], lowerpipe['y']))
-    SC.blit(GAME_SPRITES['base'], (basex,GROUNDY))
-    SC.blit(GAME_SPRITES['player'], (playerx,playery))
-    mydigits= [int(x) or x in list(str(score))]
-    width = 0
-    for digits in mydigits:
-        width+=GAME_SPRITES['numbers'][digit].get_width()
-    xoffset=(SC_W-width)/2
-    for digit in mydigits:
-        screen.blit(GAME_SPRITES['numbers'][digit],(xoffset, SC_H*0.12))
-        xoffset+=GAME_SPRITES['numbers'][digit].get_width()
-    pygame.display.update()
-    fpsclock.tick(fps)
+        SC.blit(GAME_SPRITES['background'], (0,0))
+        for upperpipe,lowerpipe in zip(upperpipes,lowerpipes):
+            SC.blit(GAME_SPRITES['obstacle'][0], (upperpipe['x'], upperpipe['y']))
+            SC.blit(GAME_SPRITES['obstacle'][1], (lowerpipe['x'], lowerpipe['y']))
+        SC.blit(GAME_SPRITES['base'], (basex,GROUNDY))
+        SC.blit(GAME_SPRITES['player'], (playerx,playery))
+        mydigits= [int(x) for x in list(str(score))]
+        width = 0
+        for digit in mydigits:
+            width+=GAME_SPRITES['numbers'][digit].get_width()
+        xoffset=(SC_W-width)/2
+        for digit in mydigits:
+            SC.blit(GAME_SPRITES['numbers'][digit],(40, 40))
+            xoffset+=GAME_SPRITES['numbers'][digit].get_width()
+        pygame.display.update()
+        fpsclock.tick(FPS)
 
 def Collide(playerx, playery, upperpipes, lowerpipes):
+    playerh=GAME_SPRITES['player'].get_height()
     if (playery > (GROUNDY - GAME_SPRITES['player'].get_height())) or (playery < 0):
         try:
             GAME_SOUNDS['hit'].play()
-            GAME_SOUNDS['die'].play()
         except Exception:
             pass
         return True
-    playerh=GAME_SPRITES['obstacle'][0].get_height()
+    pipeh=GAME_SPRITES['obstacle'][0].get_height()
     for pipe in upperpipes:
-        if (playery < (playerh + pipe['y']) and abs(playerx['x'] - pipe['x']) < GAME_SPRITES['obstacle'][0].get_width()):
+        if (playery < (pipe['y'] - playerh) and abs(playerx - pipe['x']) < GAME_SPRITES['obstacle'][0].get_width()):
             try:
                 GAME_SOUNDS['hit'].play()
-                GAME_SOUNDS['die'].play()
             except Exception:
                 pass
-            return True
+            return True 
     for pipe in lowerpipes:
         playerh=GAME_SPRITES['obstacle'][0].get_height()
-        if (pipe['y'] < (playery + playerh) and abs(playerx['x'] - pipe['x']) < GAME_SPRITES['obstacle'][0].get_width()):
+        if (playery > (pipe['y']) and abs(playerx - pipe['x']) < GAME_SPRITES['obstacle'][0].get_width()):
             try:
                 GAME_SOUNDS['hit'].play()
-                GAME_SOUNDS['die'].play()
             except Exception:
                 pass
             return True
 
 def getRandomPipe():
     pipeh= GAME_SPRITES['obstacle'][0].get_height()
-    offset= SC_W/3
-    y2= offset+ random.randrange(0, int(SC_H - GAME_SPRITES['base'].get_height()- offset))
-    pipex= SC_W + 10
+    offset= SC_W/4
+    y2= offset+ random.randrange(0, int(SC_H - GAME_SPRITES['base'].get_height()-offset))
+    pipex= SC_W/2
     y1= pipeh - y2 + offset
     pipe=[
-        {'x':pipex, 'y':-y1},
-        {'x':pipex, 'y':y2}
+        {'x':pipex, 'y':-y1},  #upper pipe
+        {'x':pipex, 'y':y2}    #lower pipe 
     ]
     return pipe
 
