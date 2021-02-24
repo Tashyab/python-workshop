@@ -1,5 +1,5 @@
 py_to_exe
 AI.py
 tune.mp3
-/Sprites
-mygame.py <under work>
+/equip
+flappy.py
