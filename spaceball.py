@@ -34,11 +34,11 @@ ORANGE=(255,165,0)
 
 FONT=pygame.font.SysFont('broadway', 50)
 WALL=pygame.Rect(SW/2+5, 0, 10, SH)
-PH=140
-PW=140
+PH=105
+PW=105
 P1=pygame.transform.scale(PLAYER_RED, (PW, PH))
 P2=pygame.transform.scale(pygame.transform.flip(PLAYER_BLUE, True, False), (PW, PH))
-PV=6
+PV=10
 
 def welcomeScreen():
     show_text=False
