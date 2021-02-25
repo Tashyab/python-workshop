@@ -65,7 +65,7 @@ def mainGame():
     playerminvely= -8
     playeraccy=1
 
-    playerflapvel= -16
+    playerflapvel= -14
     playerflapped=False
 
     while(True):
@@ -169,7 +169,7 @@ def Collide(playerx, playery, upperpipes, lowerpipes):
 
 def getRandomPipe():
     pipeh= GAME_SPRITES['obstacle'][0].get_height()
-    offset= SC_W/4
+    offset= SC_W/5
     y2= offset+ random.randrange(0, int(SC_H - GAME_SPRITES['base'].get_height()-offset))
     pipex= SC_W + 10
     y1= pipeh - y2 + offset
