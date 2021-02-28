@@ -3,7 +3,18 @@ import pygame
 from pygame.locals import *
 import random
 import time
+import pyttsx3
+try:
+    pygame.mixer.init()
+except Exception:
+    pass
+pygame.font.init()
 
+engine=pyttsx3.init('sapi5')
+voice=engine.getProperty('voices')
+engine.setProperty('voice',voice[0].id)
+engine.setProperty('rate',160)
+engine.setProperty('volume', 1.0)
 FPS=38
 SC_H=630
 SC_W=1120
@@ -14,6 +25,11 @@ GAME_SOUNDS={}
 PLAYER="equip/sprites/char.png"
 BACK="equip/sprites/background.png"
 OBSTACLE="equip/sprites/obstacle.png"
+FONT=pygame.font.SysFont('impact', 30)
+
+def speak(audio):
+    engine.say(audio)
+    engine.runAndWait()
 
 def welcomeScreen():
     playerx=int(SC_W/2)
@@ -42,7 +58,6 @@ def welcomeScreen():
                 fpsclock.tick(FPS)
 
 def mainGame():
-
     score=0
     playerx=int(SC_W/4)
     playery=int(SC_H/2)
@@ -59,7 +74,7 @@ def mainGame():
         {'x':SC_W+100,'y':newpipe1[1]['y']}, 
         {'x':SC_W+100+(SC_W/2),'y':newpipe2[1]['y']}
     ]
-    pipevelx= -4
+    pipevelx= -5
     playervely= -9
     playermaxvely=10
     playerminvely= -8
@@ -78,12 +93,13 @@ def mainGame():
                     playervely= playerflapvel
                     playerflapped= True
                     try:
-                        GAME_SOUNDS['bell'].play()
+                        GAME_SOUNDS['swoosh'].play()
                     except Exception:
                         pass
             
         crashTest=Collide(playerx, playery, upperpipes, lowerpipes)
         if crashTest:
+            print("Your score is", score)
             return True
 
         playermidpos= playerx + GAME_SPRITES['player'].get_width()/2
@@ -91,7 +107,6 @@ def mainGame():
             pipemidpos=pipe['x'] + GAME_SPRITES['obstacle'][0].get_width()/2
             if pipemidpos <= playermidpos < pipemidpos+4:
                 score+=1
-                print(f"Your score is {score}")
                 try:
                     GAME_SOUNDS['point'].play()
                 except Exception:
@@ -110,7 +125,7 @@ def mainGame():
             upperpipe['x']+= pipevelx
             lowerpipe['x']+= pipevelx
 
-        if 0<upperpipes[0]['x'] <5:
+        if 0<upperpipes[0]['x'] <10:
             newpipe=getRandomPipe()
             upperpipes.append(newpipe[0])
             lowerpipes.append(newpipe[1])
@@ -118,9 +133,14 @@ def mainGame():
         if upperpipes[0]['x'] + GAME_SPRITES['obstacle'][0].get_width() + 10 < 0 :
             upperpipes.pop(0)
             lowerpipes.pop(0)
-
-        SC.blit(GAME_SPRITES['background'], (0,0))
         
+        screen(score)
+        if score==2:
+            # speak("Congrats. You won. Ultron is now your servant. You get two bonus point.")
+            speak("All hail Tashyab, The creator.")
+            speak("Enjoy the fast wind.")
+            pipevelx=-15
+            score+=2
         for upperpipe,lowerpipe in zip(upperpipes,lowerpipes):
             SC.blit(GAME_SPRITES['obstacle'][0], (upperpipe['x'], upperpipe['y']))
             SC.blit(GAME_SPRITES['obstacle'][1], (lowerpipe['x'], lowerpipe['y']))
@@ -141,6 +161,33 @@ def mainGame():
         pygame.display.update()
         fpsclock.tick(FPS)
 
+def screen(score):
+    text=FONT.render("Reach 18 points to win", 1, (255,0,0))
+    text_win=FONT.render("Congrats, You win. Enjoy.", 1, (0,0,255))
+    text_hail=FONT.render("All hail Tashyab, The creator.", 1, (255,0,0))
+    if 0<=score and score<3:
+        SC.blit((GAME_SPRITES['background'][0]), (0,0))
+        SC.blit(text,(20,20))
+    elif 3<=score and score<6:
+        SC.blit((GAME_SPRITES['background'][1]), (0,0))
+        SC.blit(text,(20,20))
+    elif 6<=score and score<9:
+        SC.blit((GAME_SPRITES['background'][2]), (0,0))
+        SC.blit(text,(20,20))
+    elif 9<=score and score<12:
+        SC.blit((GAME_SPRITES['background'][3]), (0,0))
+        SC.blit(text,(20,20))
+    elif 12<=score and score<15:
+        SC.blit((GAME_SPRITES['background'][4]), (0,0))
+        SC.blit(text,(20,20))
+    elif 15<=score and score<18:
+        SC.blit((GAME_SPRITES['background'][5]), (0,0))
+        SC.blit(text,(20,20))
+    if score>=18:
+        SC.blit((GAME_SPRITES['background'][0]), (0,0))
+        SC.blit(text_win,(20,20))
+        SC.blit(text_hail, (20, SC_H-20))
+    
 def Collide(playerx, playery, upperpipes, lowerpipes):
     playerh=GAME_SPRITES['player'].get_height()
     pipeh=GAME_SPRITES['obstacle'][0].get_height()
@@ -220,7 +267,15 @@ if __name__=="__main__":
         pygame.image.load('equip/sprites/back5.png')
     )
     
-    GAME_SPRITES['background']=pygame.image.load(BACK).convert()
+    GAME_SPRITES['background']=(
+        pygame.image.load(BACK).convert(),
+        pygame.transform.scale(pygame.image.load('equip/sprites/back1.png'), (SC_W,SC_H)), 
+        pygame.transform.scale(pygame.image.load('equip/sprites/back2.png'), (SC_W,SC_H)),
+        pygame.transform.scale(pygame.image.load('equip/sprites/back3.png'), (SC_W,SC_H)),
+        pygame.transform.scale(pygame.image.load('equip/sprites/back4.png'), (SC_W,SC_H)),
+        pygame.transform.scale(pygame.image.load('equip/sprites/back5.png'), (SC_W,SC_H))
+        
+    )
     GAME_SPRITES['player']=pygame.image.load(PLAYER).convert_alpha()
 
     while(True):
