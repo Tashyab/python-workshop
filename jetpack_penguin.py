@@ -6,8 +6,9 @@ import time
 import pyttsx3
 try:
     pygame.mixer.init()
+    soundcheck=1
 except Exception:
-    pass
+    soundcheck=0
 pygame.font.init()
 
 engine=pyttsx3.init('sapi5')
@@ -135,12 +136,14 @@ def mainGame():
             lowerpipes.pop(0)
         
         screen(score)
-        if score==2:
-            # speak("Congrats. You won. Ultron is now your servant. You get two bonus point.")
-            speak("All hail Tashyab, The creator.")
-            speak("Enjoy the fast wind.")
+        if score==6:
+            if soundcheck==1:
+                speak("Congrats. You won. Ultron is now your servant. You get two bonus point.")
+                speak("All hail Tashyab, The creator.")
+                speak("Fast wind coming. Be Ready.")
             pipevelx=-15
-            score+=2
+            score+=2               
+        
         for upperpipe,lowerpipe in zip(upperpipes,lowerpipes):
             SC.blit(GAME_SPRITES['obstacle'][0], (upperpipe['x'], upperpipe['y']))
             SC.blit(GAME_SPRITES['obstacle'][1], (lowerpipe['x'], lowerpipe['y']))
@@ -163,7 +166,7 @@ def mainGame():
 
 def screen(score):
     text=FONT.render("Reach 18 points to win", 1, (255,0,0))
-    text_win=FONT.render("Congrats, You win. Enjoy.", 1, (0,0,255))
+    text_win=FONT.render("Congrats, Enjoy the fast wind.", 1, (0,0,255))
     text_hail=FONT.render("All hail Tashyab, The creator.", 1, (255,0,0))
     if 0<=score and score<3:
         SC.blit((GAME_SPRITES['background'][0]), (0,0))
@@ -186,8 +189,8 @@ def screen(score):
     if score>=18:
         SC.blit((GAME_SPRITES['background'][0]), (0,0))
         SC.blit(text_win,(20,20))
-        SC.blit(text_hail, (20, SC_H-20))
-    
+        SC.blit(text_hail, (400, 20))
+        
 def Collide(playerx, playery, upperpipes, lowerpipes):
     playerh=GAME_SPRITES['player'].get_height()
     pipeh=GAME_SPRITES['obstacle'][0].get_height()
