@@ -136,7 +136,7 @@ def mainGame():
             lowerpipes.pop(0)
         
         screen(score)
-        if score==6:
+        if score==18:
             if soundcheck==1:
                 speak("Congrats. You won. Ultron is now your servant. You get two bonus point.")
                 speak("All hail Tashyab, The creator.")
