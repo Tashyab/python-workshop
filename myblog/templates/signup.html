@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign-up</title>
+    <!-- <link rel="stylesheet" type="text/css" href="css/login.css"> -->
+    {% load static %}
+    <style>
+        body{
+            background-image: url("../static/images/signup.jpg");
+            background-size: cover;
+            color:white;
+        }
+        .container{
+            margin:50px 200px;
+        }
+        form{
+            padding:40px;
+            text-transform: uppercase ;
+            font-family: cursive;
+            border: white solid 6px;
+            border-radius: 12px;
+            background-color: black;
+            opacity: 0.8;
+        }
+        input{
+            padding: 4px;
+            margin: 12px 0 12px 4px;
+        }
+        input:focus {
+             background-color: lightblue;
+        }
+        .gen{
+            display: inline;  
+            margin-right: 20px;
+        }
+        #terms{
+            margin-left: 8px;
+        }
+        a{
+            text-decoration: none;
+            color: aqua;
+        }
+        a:hover{
+            color:orangered;
+        }
+        #reset{
+            background-color: white;
+            border: solid red 2px;
+            color: red;
+        }
+        #reset:hover{
+            background-color: red;
+            color: white;
+        }
+        #signup{
+            background-color: white;
+            border: solid darkgreen 2px;
+            color: darkgreen;
+        }
+        #signup:hover{
+            background-color: darkgreen;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tashyab's blog</h1>
+        <h3>Plese fill this form to sign-up your account</h3>
+        <form action="" style="float: left;">
+            <div>
+                Name <input type="text" name="name" id="name">
+            </div>
+            <div >
+                Email <input type="email" name="mail" id="mail">
+            </div>
+            <div>
+                Username <input type="text" name="uname" id="uname">
+            </div>
+            <div>
+                Password <input type="password" name="pword" id="pword">
+            </div>
+            <div>
+                Date of Birth <input type="date" name="dob" id="dob" min="1900-01-01" max="{{today}}">
+            </div>
+            <div>
+                Mobile no. <input type="tel" id="phno" name="phno">
+            </div>
+            <div style="display: inline; padding-right: 12px;">
+                Gender :
+            </div>
+            <div style="display: inline;">
+                 Male <input type="radio" name="gen" class="gen">
+                 Female <input type="radio" name="gen" class="gen">
+                 Others <input type="radio" name="gen" class="gen">
+            </div>
+            <div>
+                I accept the <a href="/terms">Terms of use</a> & <a href="/privacy-policy">Privacy policy</a><input type="checkbox"nam="terms" id="terms" checked>
+            </div>
+            <div>
+                <input type="reset" value="RESET" id="reset" style="padding-right: 8px;">
+                <input type="submit" value="SUBMIT" id="signup" style="display: block;">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
