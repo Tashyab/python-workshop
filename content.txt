@@ -3,3 +3,4 @@ AI.py
 tune.mp3
 /equip
 flappy.py
+laptx.txt
