@@ -35,7 +35,7 @@ def greet():
         speak("Good evening.")
     else:
         speak("Hey.")
-    speak("Ultron here, How can I kill you. I mean, I mean help you?")
+    speak("Assistant here, How can I kill you. I mean, I mean help you?")
 
 def takecommand():
     r=sr.Recognizer()
@@ -66,7 +66,7 @@ def takecommand():
         return query
 
 def filestarter(key):
-    path=f"C:\\Users\\VIP\\Desktop\\{key}"
+    path=f"C:\\Users\\Acer\\Desktop\\{key}"
     speak(f"Opening {key}....")
     print(f"Opening {key}....\n")
     os.startfile(path)
@@ -252,7 +252,7 @@ def start(pr):
                 speak(pr['articles'][i]['title'])
                 time.sleep(1)
         i += 1
-    speak("That's all from today's headlines. Hope your knowledge of current affairs improves.")
+    speak("That's all from today's headlines. Hope you are somewhat lesser dumb now.")
 
 def news(query):
     speak("Which headlines would you like to hear? Top Headlines, Sports, Entertainment, or Business")
@@ -286,11 +286,21 @@ if __name__=="__main__":
     greet()
     while True:
         n=int(random.random()*10)
+        dicel=[1,2,3,4,5,6]
         query=takecommand().lower()
         
         if 'set timer' in query:
             timer()
-        
+        elif ('dice' in query) or ('die' in query):
+            dc=random.choice(dicel)
+            speak("rolling")
+            speak("and rolling")
+            speak(f"and it is.. {dc} times fuck you.")
+        elif ('card' in query) or ('cards' in query):
+            if n>4:
+                speak("It is the king of morons and it looks like you.")
+            else:
+                speak("It is the queen of hearts laughing at your face.")
         elif ('news' in query) or ('headline' in query):
             news(query)
       
@@ -299,7 +309,7 @@ if __name__=="__main__":
                 sendmail()
                 speak("Mail sent successfully.")  
             except Exception:
-                speak("Sorry can't send the mail.")
+                speak("Sorry can't send the mail. Check authorisation to use other apps for srnding mail.")
 
         elif 'time' in query:
             time=datetime.datetime.now().strftime("%I:%M")
@@ -332,20 +342,16 @@ if __name__=="__main__":
                 q=query.split("open ")[1]
                 filestarter(q)
             except Exception:
-                if 'code blocks' in query:
-                    filestarter("codeblocks")
-                elif ('python' in query):
-                    filestarter("Pycharm")
-                elif 'code' in query:
+                if 'code' in query:
                     filestarter("Visual Studio Code")
                 elif 'chrome' in query:
-                    filestarter("Chrome")
+                    filestarter("Google Chrome")
                 else:
                     try:
                         speak("No such application on desktop.")
                         speak("Opening in browser") 
                         site=query.split("open ")[1]
-                        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+                        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files (x86)\Google\Update\Download\{8A69D345-D564-463C-AFF1-A69D9E530F96}\95.0.4638.69\chrome.exe"))
                         webbrowser.get('chrome').open(f"{site}.com")
                         exit()
                     except Exception:
@@ -361,7 +367,7 @@ if __name__=="__main__":
         elif 'search' in query:
             query=query.replace("search ", "")
             query=query.replace(" ","+")
-            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files (x86)\Google\Update\Download\{8A69D345-D564-463C-AFF1-A69D9E530F96}\95.0.4638.69\chrome.exe"))
             webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
             exit()
                            
@@ -371,7 +377,7 @@ if __name__=="__main__":
         elif 'thank' in query:
             hour=int(datetime.datetime.now().strftime("%H"))
             if hour>=20:
-                speak("Good Night. Just so you know. Ghosts are real.")
+                speak("Good Night. Just so you know. Ghosts are real, and they are always staring.")
             else:
                 speak("Have a nice day ahead, hoping some virus free me from your stupid computer.")
             exit()
@@ -398,7 +404,7 @@ if __name__=="__main__":
             elif 'search' in q:
                 query=query.replace("search", "")
                 query=query.replace(" ","+")
-                webbrowser.register('chrome', None, webbrowser.BackgroundBrowser("C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe"))
+                webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files (x86)\Google\Update\Download\{8A69D345-D564-463C-AFF1-A69D9E530F96}\95.0.4638.69\chrome.exe"))
                 webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
                 exit()
             elif ('no' in q) or ('na' in q):
