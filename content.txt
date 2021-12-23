@@ -1,6 +1,11 @@
+.git
+Assistant
+content.txt
+desktop.ini
+Django
+hangman
+PyGame
 py_to_exe
-AI.py
-tune.mp3
-/equip
-flappy.py
-laptx.txt
+rough.py
+tempCodeRunnerFile.py
+Tkinter

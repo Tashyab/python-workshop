@@ -351,7 +351,7 @@ if __name__=="__main__":
                         speak("No such application on desktop.")
                         speak("Opening in browser") 
                         site=query.split("open ")[1]
-                        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files (x86)\Google\Update\Download\{8A69D345-D564-463C-AFF1-A69D9E530F96}\95.0.4638.69\chrome.exe"))
+                        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files\Google\Chrome\Application\chrome.exe"))
                         webbrowser.get('chrome').open(f"{site}.com")
                         exit()
                     except Exception:
@@ -367,7 +367,7 @@ if __name__=="__main__":
         elif 'search' in query:
             query=query.replace("search ", "")
             query=query.replace(" ","+")
-            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files (x86)\Google\Update\Download\{8A69D345-D564-463C-AFF1-A69D9E530F96}\95.0.4638.69\chrome.exe"))
+            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files\Google\Chrome\Application\chrome.exe"))
             webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
             exit()
                            
