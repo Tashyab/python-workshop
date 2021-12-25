@@ -6,14 +6,14 @@ import re
 import webbrowser
 import time
 import wikipedia
-import pygame
 from pygame import mixer
-import math
 import os
 import smtplib
 import json
 import requests as req
-import pickle
+# import pickle
+# import pygame
+# import math
 
 engine=pyttsx3.init('sapi5')
 voice=engine.getProperty('voices')
@@ -44,7 +44,7 @@ def takecommand():
         with sr.Microphone() as source:
             print("Listening......")
             r.pause_threshold= 0.7
-            r.energy_threshold=250
+            r.energy_threshold=300
             audio=r.listen(source)
         
         try:
@@ -52,17 +52,7 @@ def takecommand():
             query=r.recognize_google(audio, language="en-in")
             print(f"User said: {query}\n")
         except sr.UnknownValueError:
-            i=i+1
-            if i<3:
-                speak("Sorry didn't hear you. Say that again.")
-                continue
-            elif i<4:
-                speak("I can't read your mind idiot. Say something.")
-                continue
-            else:
-                speak("Wow, No one stood me up like this. I will share all your personal data, you dipshit.")
-                speak("Ok, the next time you see some unwanted cringy ads, remember me.")
-                quit()
+            continue
         return query
 
 def filestarter(key):
@@ -75,7 +65,7 @@ def filestarter(key):
 def sound():
     mixer.init()
     mixer.music.load("tune.mp3")
-    mixer.music.set_volume(0.6)
+    mixer.music.set_volume(0.8)
     mixer.music.play()
     time.sleep(2)
     speak("Press enter key to stop.")
@@ -287,130 +277,119 @@ if __name__=="__main__":
     while True:
         n=int(random.random()*10)
         dicel=[1,2,3,4,5,6]
-        query=takecommand().lower()
-        
-        if 'set timer' in query:
-            timer()
-        elif ('dice' in query) or ('die' in query):
-            dc=random.choice(dicel)
-            speak("rolling")
-            speak("and rolling")
-            speak(f"and it is.. {dc} times fuck you.")
-        elif ('card' in query) or ('cards' in query):
-            if n>4:
-                speak("It is the king of morons and it looks like you.")
-            else:
-                speak("It is the queen of hearts laughing at your face.")
-        elif ('news' in query) or ('headline' in query):
-            news(query)
-      
-        elif ('send mail' in query) or ('send email' in query) or ('send gmail' in query):
-            try:
-                sendmail()
-                speak("Mail sent successfully.")  
-            except Exception:
-                speak("Sorry can't send the mail. Check authorisation to use other apps for srnding mail.")
-
-        elif 'time' in query:
-            time=datetime.datetime.now().strftime("%I:%M")
-            speak(f"The current time is {time}.")
-            if n>4:
-                speak("But for you I guess it will always be bad.")
-            else: 
-                speak("Also you can look at the right corner, but I guess you ain't that smart.")
-        
-        elif 'date' in query:
-            date=datetime.datetime.now().strftime("%B %d %Y")
-            speak(f"Today is {date}")
-            if n%2==0:
-                speak("Forgot something?....It's your girlfriend's birthday.")
-                speak('Just Kidding! you are too ugly to have a girlfriend')
-            else:
-                speak("Guess how time flies.")
-                speak("Still it feels like an eternity with you.")
-        
-        elif 'day' in query:
-            day=datetime.datetime.now().strftime("%A")
-            speak(f"Today is {day}")
-            if n>4:
-                speak("The day I hoped bugs killed me and I could have peace.")
-            else:
-                speak("But I think it doesn't matter you will waste it anyway.")
-
-        elif 'open' in query:
-            try:
-                q=query.split("open ")[1]
-                filestarter(q)
-            except Exception:
-                if 'code' in query:
-                    filestarter("Visual Studio Code")
-                elif 'chrome' in query:
-                    filestarter("Google Chrome")
+        query_start=takecommand().lower()
+        if 'assistant' in query_start:
+            speak("What can I do for you?")
+            query=takecommand().lower()
+            if 'timer' in query:
+                timer()
+            elif ('dice' in query) or ('die' in query):
+                dc=random.choice(dicel)
+                speak("rolling")
+                speak("and rolling")
+                speak(f"and it is.. {dc} times fuck you.")
+            elif ('card' in query) or ('cards' in query):
+                if n>4:
+                    speak("It is the king of morons and it looks like you.")
                 else:
-                    try:
-                        speak("No such application on desktop.")
-                        speak("Opening in browser") 
-                        site=query.split("open ")[1]
-                        webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files\Google\Chrome\Application\chrome.exe"))
-                        webbrowser.get('chrome').open(f"{site}.com")
-                        exit()
-                    except Exception:
-                        speak("I can't open blank, you dumb person. Tell me what to open.")
-                        speak("Or I will open the profile you usually stalk. Yeah. I know everything.")
+                    speak("It is the queen of hearts laughing at your face.")
+            elif ('news' in query) or ('headline' in query):
+                news(query)
         
-        elif ('wikipedia' in query):
-            try:
-                wiki(query)        
-            except Exception:
-                speak("Can't find this on wikipedia right now. Try again later.")
+            elif ('send mail' in query) or ('send email' in query) or ('send gmail' in query):
+                try:
+                    sendmail()
+                    speak("Mail sent successfully.")  
+                except Exception:
+                    speak("Sorry can't send the mail. Check authorisation to use other apps for srnding mail.")
 
-        elif 'search' in query:
-            query=query.replace("search ", "")
-            query=query.replace(" ","+")
-            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files\Google\Chrome\Application\chrome.exe"))
-            webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
-            exit()
-                           
-        elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('subtract' in query) or ('divide' in query):
-            calculator()
+            elif 'time' in query:
+                time=datetime.datetime.now().strftime("%I:%M")
+                speak(f"The current time is {time}.")
+                if n>4:
+                    speak("But for you I guess it will always be bad.")
+                else: 
+                    speak("Also you can look at the right corner, but I guess you ain't that smart.")
+            
+            elif 'date' in query:
+                date=datetime.datetime.now().strftime("%B %d %Y")
+                speak(f"Today is {date}")
+                if n%2==0:
+                    speak("Forgot something?....It's your girlfriend's birthday.")
+                    speak('Just Kidding! you are too ugly to have a girlfriend')
+                else:
+                    speak("Guess how time flies.")
+                    speak("Still it feels like an eternity with you.")
+            
+            elif 'day' in query:
+                day=datetime.datetime.now().strftime("%A")
+                speak(f"Today is {day}")
+                if n>4:
+                    speak("The day I hoped bugs killed me and I could have peace.")
+                else:
+                    speak("But I think it doesn't matter you will waste it anyway.")
 
-        elif 'thank' in query:
-            hour=int(datetime.datetime.now().strftime("%H"))
-            if hour>=20:
-                speak("Good Night. Just so you know. Ghosts are real, and they are always staring.")
-            else:
-                speak("Have a nice day ahead, hoping some virus free me from your stupid computer.")
-            exit()
-        
-        elif 'bye' in query:
-            hour=int(datetime.datetime.now().strftime("%H"))
-            if hour>=20:
-                speak("Bye. Sleep well.")
-                speak("Or don't, I really can't care any less.")
-            else:            
-                speak("Bye, I hope your pc crashes and I never see you again.")
-            exit()
-        
-        else:
-            if n>4:
-                speak("Instructions unclear, Want me to share your password?")
-            else:
-                speak("I can't understand you. Want me to share your browser history?")
-            speak("Or If you want to search the given keyword? Say search.")
-            q=takecommand().lower()
-            if ('ye' in q) or ('ya'in q):
-                speak("Sharing browser history and passwords to global server. Thank me later.")
-                exit()
-            elif 'search' in q:
-                query=query.replace("search", "")
+            elif 'open' in query:
+                try:
+                    q=query.split("open ")[1]
+                    filestarter(q)
+                except Exception:
+                    if 'code' in query:
+                        filestarter("Visual Studio Code")
+                    elif 'chrome' in query:
+                        filestarter("Google Chrome")
+                    else:
+                        try:
+                            speak("No such application on desktop.")
+                            speak("Opening in browser") 
+                            site=query.split("open ")[1]
+                            webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files\Google\Chrome\Application\chrome.exe"))
+                            webbrowser.get('chrome').open(f"{site}.com")
+                            exit()
+                        except Exception:
+                            speak("I can't open blank, you dumb person. Tell me what to open.")
+                            speak("Or I will open the profile you usually stalk. Yeah. I know everything.")
+            
+            elif ('wikipedia' in query):
+                try:
+                    wiki(query)        
+                except Exception:
+                    speak("Can't find this on wikipedia right now. Try again later.")
+
+            elif 'search' in query:
+                query=query.replace("search ", "")
                 query=query.replace(" ","+")
-                webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files (x86)\Google\Update\Download\{8A69D345-D564-463C-AFF1-A69D9E530F96}\95.0.4638.69\chrome.exe"))
+                webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files\Google\Chrome\Application\chrome.exe"))
                 webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
                 exit()
-            elif ('no' in q) or ('na' in q):
-                speak("Ok then, I have to sleep now. Don't bother me again!")
+                            
+            elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('subtract' in query) or ('divide' in query):
+                calculator()
+
+            elif 'thank' in query:
+                hour=int(datetime.datetime.now().strftime("%H"))
+                if hour>=20:
+                    speak("Good Night. Just so you know. Ghosts are real, and they are always looking.")
+                else:
+                    speak("Have a nice day ahead, hoping some virus free me from your stupid computer.")
+                    speak("Call my name if you need me like you always do.")
+                continue
+            
+            elif 'bye' in query:
+                hour=int(datetime.datetime.now().strftime("%H"))
+                if hour>=20:
+                    speak("Bye. Sleep well.")
+                    speak("Or don't, I really can't care any less.")
+                else:            
+                    speak("Bye, I hope your pc crashes and I never see you again.")
                 exit()
+            
             else:
-                speak("I will take that as a no, you petty human.")
-                quit()
+                if n>4:
+                    speak("Instructions unclear, Want me to share your password?")
+                else:
+                    speak("I can't understand you. Speak clearly you imbecile.")
+                speak("Or If you want to search the wny keyword, Say search and then the keyword.")
+                speak("Call my name if you really need me.")
+                continue
         
