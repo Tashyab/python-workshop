@@ -389,7 +389,7 @@ if __name__=="__main__":
                     speak("Instructions unclear, Want me to share your password?")
                 else:
                     speak("I can't understand you. Speak clearly you imbecile.")
-                speak("Or If you want to search the wny keyword, Say search and then the keyword.")
+                speak("Or If you want to search the any keyword, Say search and then the keyword.")
                 speak("Call my name if you really need me.")
                 continue
         
