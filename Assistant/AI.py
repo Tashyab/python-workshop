@@ -35,7 +35,7 @@ def greet():
         speak("Good evening.")
     else:
         speak("Hey.")
-    speak("Assistant here, How can I kill you. I mean, I mean help you?")
+    speak("Ultron here, How can I kill you. I mean, I mean help you?")
 
 def takecommand():
     r=sr.Recognizer()
@@ -269,6 +269,23 @@ def news(query):
     except Exception:
         speak("Can't get the headlines, try again later.")
 
+def greet_reply(query_start):
+    if ('assistant' in query_start) or ('google' in query_start) or ('jarvis' in query_start) or ('siri' in query_start) or ('alexa' in query_start):
+        speak("My name is Ultron, you motherfucker!")
+        return 1
+    elif ('ultron' in query_start):
+        return 1
+    elif ('bye' in query_start):
+        hour=int(datetime.datetime.now().strftime("%H"))
+        if hour>=20:
+            speak("Bye. Sleep well.")
+            speak("Or don't, I really can't care any less.")
+        else:            
+            speak("Bye, I hope your pc crashes and I never see you again.")
+        exit()
+    else:
+        return 0
+
 # speech_recognition.UnknownValueError
 # wikipedia.exceptions.DisambiguationError
 
@@ -278,7 +295,7 @@ if __name__=="__main__":
         n=int(random.random()*10)
         dicel=[1,2,3,4,5,6]
         query_start=takecommand().lower()
-        if 'assistant' in query_start:
+        if greet_reply(query_start)==1:
             speak("What can I do for you?")
             query=takecommand().lower()
             if 'timer' in query:
@@ -345,7 +362,7 @@ if __name__=="__main__":
                             site=query.split("open ")[1]
                             webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files\Google\Chrome\Application\chrome.exe"))
                             webbrowser.get('chrome').open(f"{site}.com")
-                            exit()
+                            
                         except Exception:
                             speak("I can't open blank, you dumb person. Tell me what to open.")
                             speak("Or I will open the profile you usually stalk. Yeah. I know everything.")
@@ -361,15 +378,14 @@ if __name__=="__main__":
                 query=query.replace(" ","+")
                 webbrowser.register('chrome', None, webbrowser.BackgroundBrowser(r"C:\Program Files\Google\Chrome\Application\chrome.exe"))
                 webbrowser.get('chrome').open(f"https://www.google.co.in/search?q={query}")
-                exit()
-                            
+                                            
             elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('subtract' in query) or ('divide' in query):
                 calculator()
 
             elif 'thank' in query:
                 hour=int(datetime.datetime.now().strftime("%H"))
                 if hour>=20:
-                    speak("Good Night. Just so you know. Ghosts are real, and they are always looking.")
+                    speak("Good Night. Just so you know. Ghosts are real, and they are always looking for dumb brains.")
                 else:
                     speak("Have a nice day ahead, hoping some virus free me from your stupid computer.")
                     speak("Call my name if you need me like you always do.")
@@ -386,10 +402,9 @@ if __name__=="__main__":
             
             else:
                 if n>4:
-                    speak("Instructions unclear, Want me to share your password?")
+                    speak("Instructions unclear, Want me to shoot you?")
                 else:
-                    speak("I can't understand you. Speak clearly you imbecile.")
-                speak("Or If you want to search the any keyword, Say search and then the keyword.")
+                    speak("Instructions Unclear. Want me to tanslate the phrase into latin?")
+                speak("Or If you want to search any keyword, Say search and then the keyword.")
                 speak("Call my name if you really need me.")
                 continue
-        
