@@ -15,7 +15,7 @@ import requests as req
 # import pygame
 # import math
 
-engine=pyttsx3.init('sapi5')
+engine=pyttsx3.init('dummy')
 voice=engine.getProperty('voices')
 engine.setProperty('voice',voice[0].id)
 engine.setProperty('rate',180)
