@@ -4,6 +4,7 @@ from tkinter import messagebox
 import requests as req
 import json
 from datetime import datetime
+import time
 
 def news():
     global key
@@ -32,6 +33,7 @@ def news():
     except Exception as e:
         print(e)
         val=messagebox.askretrycancel(title="Retry", message="Check your internet connection!")
+        fetch_text.destroy()
         if val:
             news()
 
@@ -44,8 +46,8 @@ def start(pr):
             if key == 'title':
                 l.append(pr['articles'][i]['title'])
         i += 1
-    f=Frame(f3, before=nf, border=2, relief=SOLID)
-    f.pack(pady=5, padx=80)
+    f=Frame(f3, border=2, relief=SOLID)
+    f.pack(before=nf, pady=5, padx=80)
     nf=f
     fetch_text.destroy()
     for i in l:
