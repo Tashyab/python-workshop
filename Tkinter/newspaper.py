@@ -8,7 +8,7 @@ from datetime import datetime
 def news():
     global key
     global fetch_text
-    fetch_text=Label(f3, text="Fetching news....", font="40")
+    fetch_text=Label(ffetch, text="Fetching news....", font="40")
     fetch_text.pack(padx=400)
     f3.update()
     q=optvar.get()
@@ -37,7 +37,6 @@ def news():
 
 def start(pr):
     global nf
-    nf=Label(text=" ").pack()
     i = 0
     l=[]
     while (i < len(pr['articles'])):
@@ -139,6 +138,8 @@ if __name__=="__main__":
     wf=Frame(can)
     can.create_window((0,0), window=wf, anchor="nw")
     
+    ffetch=Frame(wf)
+    ffetch.pack()
     f3=Frame(wf)
     f3.pack()
 
