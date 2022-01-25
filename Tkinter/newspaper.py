@@ -1,3 +1,4 @@
+from cProfile import label
 from tkinter import *
 from tkinter import messagebox
 import requests as req
@@ -33,10 +34,10 @@ def news():
         val=messagebox.askretrycancel(title="Retry", message="Check your internet connection!")
         if val:
             news()
-        
 
 def start(pr):
     global nf
+    nf=Label(text=" ").pack()
     i = 0
     l=[]
     while (i < len(pr['articles'])):
@@ -44,8 +45,9 @@ def start(pr):
             if key == 'title':
                 l.append(pr['articles'][i]['title'])
         i += 1
-    nf=Frame(f3, border=2, relief=SOLID)
-    nf.pack(pady=5, padx=80)
+    f=Frame(f3, before=nf, border=2, relief=SOLID)
+    f.pack(pady=5, padx=80)
+    nf=f
     fetch_text.destroy()
     for i in l:
         text=Label(nf, text=i, pady=5)
@@ -121,7 +123,7 @@ if __name__=="__main__":
     db=Button(f2, text="DELETE", command=dnews, relief=RAISED, borderwidth=3)
     db.pack(padx=5, pady=5)
 
-    mf=Frame(root, border=2, relief=SOLID)
+    mf=Frame(root, relief=SOLID)
     mf.pack(fill=BOTH, expand=1)
 
     can=Canvas(mf)
@@ -139,6 +141,8 @@ if __name__=="__main__":
     
     f3=Frame(wf)
     f3.pack()
+
+    nf=None
     
     for i in range(100):
         Label(wf, text=f" ").pack(pady=10)
