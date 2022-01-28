@@ -1,191 +1,206 @@
-from cmath import tan
 import math
-import re
-import tkinter as tk
-from tkinter.constants import END, RIDGE, SUNKEN, X
+from tkinter import *
 from functools import partial
 
-def show(d):
-    n=en.get()
-    if d=="00" and n!="":
-        en.delete(0, END)
-        en.insert(0, f"{n}{d}")
-    elif d=="0" and n!="0":
-        en.delete(0, END)
-        en.insert(0, f"{n}{d}")
-    elif d=="." and (d not in n):
-        en.delete(0, END)
-        if n=="":
-            en.insert(0, f"{0}{n}{d}")
+class Calc(Tk):
+    def __init__(self):
+        super().__init__()
+        sw=self.winfo_screenwidth()
+        self.title("Calculator")
+        self.geometry(f"700x238+{(int)(sw/2)-200}+200")
+        self.minsize(700, 238)
+        self.maxsize(700, 238)
+
+    def create_entry(self, w, bw, rel, row, col, f):
+        self.en=Entry(self, width=w, borderwidth=bw, relief=rel, font=f)
+        self.en.grid(row=row, column=col, columnspan=5, padx=10, pady=0)
+
+    def create_button(self, name, fun, rel, ft, row, col):
+        self.button=Button(text=name, command=fun, relief=rel, font=ft)
+        self.button.grid(row=row, column=col, sticky=E+W)
+    
+    def change_sign(self):
+        n=self.en.get()
+        n1=""
+        st=""
+        if(n==""):
+            self.en.insert(0, "-")
+        elif(n=="-"):
+            self.en.delete(0, END)
         else:
-            en.insert(0, f"{n}{d}")
-    elif (d!=".") and (d!="0") and (d!="00"):
-        en.delete(0, END)
-        en.insert(0, f"{n}{d}")
+            for ch in n:
+                if ch.isalpha() or ch=='√':
+                    ch=""
+                n1=n1+ch
+            if float(n1)<0:
+                n1=abs(float(n1))
+                n1=self.val_int(n1)
+            else:
+                n1=f"-{n1}"
+            for ch in n:
+                if ch.isalpha() or ch=='√':
+                    st=st+ch
+            self.en.delete(0, END)
+            self.en.insert(0, f"{st}{self.val_int(n1)}")
 
-def back():
-    en.delete(len(en.get())-1, END)
-def ac():
-    en.delete(0, END)
+    def show(self, d):
+        n=self.en.get()
+        if d=="00" and n!="" and n!="0":
+            self.en.delete(0, END)
+            self.en.insert(0, f"{n}{d}")
+        elif d=="0" and n!="0":
+            self.en.delete(0, END)
+            self.en.insert(0, f"{n}{d}")
+        elif d=="." and (d not in n):
+            self.en.delete(0, END)
+            if n=="":
+                self.en.insert(0, f"{0}{n}{d}")
+            else:
+                self.en.insert(0, f"{n}{d}")
+        elif (d!=".") and (d!="0") and (d!="00"):
+            self.en.delete(0, END)
+            if(n!="0"):
+                self.en.insert(0, f"{n}{d}")
+            else:
+                self.en.insert(0, f"{d}")
 
-def getfn():
-    global fn
-    fn=en.get()
-    en.delete(0, END)
+    def back(self):
+        self.en.delete(len(self.en.get())-1, END)
 
-def takef(op):
-    global v
-    v=op
-    getfn()
+    def ac(self):
+        self.en.delete(0, END)
 
-def show_val(k):
-    k=float(k)
-    if k==int(k):
-        k=int(k)
-    en.insert(0, f"{k}")
+    def getfn(self):
+        global fn
+        fn=self.en.get()
+        self.en.delete(0, END)
 
-def per():
-    nu=float(en.get())
-    nu=nu/100
-    en.delete(0, END)
-    show_val(nu)
+    def takef(self, op):
+        global v
+        v=op
+        self.getfn()
 
-def eq():
-    global fn
-    sn=en.get()
-    if v=="+":
-        en.delete(0, END)
-        sum=(float)(fn)+(float)(sn)
-        show_val(sum)
+    def val_int(self, k):
+        k=float(k)
+        if k==int(k):
+            k=int(k)
+        return k
 
-    elif(v=="-"):
-        en.delete(0, END)
-        diff=(float)(fn)-(float)(sn)
-        show_val(diff)
+    def per(self):
+        nu=float(self.en.get())
+        nu=nu/100
+        self.en.delete(0, END)
+        self.en.insert(0, f"{self.val_int(nu)}")
 
-    elif(v=="x"):
-        en.delete(0, END)
-        pro=(float)(fn)*(float)(sn)
-        show_val(pro)
+    def eq(self):
+        sn=self.en.get()
+        if v=="+":
+            self.en.delete(0, END)
+            sum=(float)(fn)+(float)(sn)
+            self.en.insert(0, f"{self.val_int(sum)}")
 
-    elif(v=="/"):
-        en.delete(0, END)
-        di=(float)(fn)/(float)(sn)
-        show_val(di)   
-    elif(v=="sin") or(v=="cos") or (v=="tan") or (v=="log") or (v=="√"):
-        fun(v)
+        elif(v=="-"):
+            self.en.delete(0, END)
+            diff=(float)(fn)-(float)(sn)
+            self.en.insert(0, f"{self.val_int(diff)}")
+
+        elif(v=="x"):
+            self.en.delete(0, END)
+            pro=(float)(fn)*(float)(sn)
+            self.en.insert(0, f"{self.val_int(pro)}")
+
+        elif(v=="/"):
+            self.en.delete(0, END)
+            di=(float)(fn)/(float)(sn)
+            self.en.insert(0, f"{self.val_int(di)}")   
+        elif(v=="sin") or(v=="cos") or (v=="tan") or (v=="log") or (v=="√"):
+            self.fun(v)
     
 
-def fun(f):
-    global v
-    n1=en.get()
-    n=""
-    for ch in n1:
-        if ch.isalpha() or ch=='√':
-            ch=""
-        n=n+ch
-    en.delete(0, END)
-    if n!='':
-        if f=="tan":
-            n=float(n)
-            n=math.tan(math.radians(n))
-            show_val(n)
-            
-        elif f=="sin":
-            n=float(n)
-            n=math.sin(math.radians(n))
-            show_val(n)
+    def fun(self, f):
+        global v
+        n1=self.en.get()
+        n=""
+        for ch in n1:
+            if ch.isalpha() or ch=='√':
+                ch=""
+            n=n+ch
+        self.en.delete(0, END)
+        if n!='':
+            if f=="tan":
+                n=float(n)
+                n=math.tan(math.radians(n))
+                self.en.insert(0, f"{self.val_int(n)}")
+                
+            elif f=="sin":
+                n=float(n)
+                n=math.sin(math.radians(n))
+                self.en.insert(0, f"{self.val_int(n)}")
 
-        elif f=="cos":
-            n=float(n)
-            n=math.cos(math.radians(n))
-            show_val(n)
+            elif f=="cos":
+                n=float(n)
+                n=math.cos(math.radians(n))
+                self.en.insert(0, f"{self.val_int(n)}")
 
-        elif f=="log":
-            n=float(n)
-            n=math.log10(n)
-            show_val(n)
+            elif f=="log":
+                n=float(n)
+                if(n>0):
+                    n=math.log10(n)
+                else:
+                    n=0
+                self.en.insert(0, f"{self.val_int(n)}")
 
-        elif f=="√":
-            n=float(n)
-            n=math.sqrt(n)
-            show_val(n)
-    else:
-        en.insert(0, f"{f}")
-        v=f
-        
+            elif f=="√":
+                n=float(n)
+                if(n>0):
+                    n=math.sqrt(n)
+                else:
+                    n=0
+                self.en.insert(0, f"{self.val_int(n)}")
+        else:
+            self.en.insert(0, f"{f}")
+            v=f
+
 
 if __name__=="__main__":
-    root=tk.Tk()
+    win=Calc()
 
-    root.title("Calculator")
-    sw=root.winfo_screenwidth()
-    sh=root.winfo_screenheight()
-    root.geometry(f"516x238+{(int)(sw/2)-200}+200")
-    root.maxsize(516, 238)
-    root.minsize(516, 238)
+    entry=win.create_entry(60, 5, "sunken", 0, 0, "Helvetica")
 
-    en=tk.Entry(root, width=60, borderwidth=5, relief=SUNKEN)
-    en.grid(row=0, column=0, columnspan=5, padx=10, pady=0)
-    
-    b1=tk.Button(text="1", relief="raised", command=partial(show, 1), font="bold")
-    b2=tk.Button(text="2", relief="raised", command=partial(show, 2), font="bold")
-    b3=tk.Button(text="3", relief="raised", command=partial(show, 3), font="bold")
-    b4=tk.Button(text="4", relief="raised", command=partial(show, 4), font="bold")
-    b5=tk.Button(text="5", relief="raised", command=partial(show, 5), font="bold")
-    b6=tk.Button(text="6", relief="raised", command=partial(show, 6), font="bold")
-    b7=tk.Button(text="7", relief="raised", command=partial(show, 7), font="bold")
-    b8=tk.Button(text="8", relief="raised", command=partial(show, 8), font="bold")
-    b9=tk.Button(text="9", relief="raised", command=partial(show, 9), font="bold")
-    b0=tk.Button(text="0", relief="raised", command=partial(show, "0"), font="bold")
-    bd0=tk.Button(text="00", relief="raised", command=partial(show, "00"), font="bold")
-    bdec=tk.Button(text=".", relief="raised", command=partial(show, "."), font="bold")
+    row,col=0,0
+    for i in reversed(range(1, 10)):
+        if(i<=3):
+            row=3
+        elif(i<=6):
+            row=2
+        else:
+            row=1
+        button=win.create_button(i, partial(win.show, i), "raised", "bold", row, col)
+        if((i-1)%3==0):
+            col=0
+        else:
+            col+=1
+            
+    b0=win.create_button("0", partial(win.show, 0), "raised", "bold", 4, 0)
+    bd0=win.create_button("±", win.change_sign, "raised", "bold", 4, 1)
+    bdec=win.create_button(".", partial(win.show, "."), "raised", "bold", 4, 2)
 
-    beq=tk.Button(text="=", relief="raised", command=partial(eq), font="bold")
+    bdel=win.create_button("DEL", win.back, "raised", "bold", 1, 3)
+    bac=win.create_button("AC", win.ac, "raised", "bold", 1, 4)
 
-    bplus=tk.Button(text="+", relief="raised", command=partial(takef, "+"), font="bold")
-    bmul=tk.Button(text="x", relief="raised", command=partial(takef, "x"), font="bold")
-    bmin=tk.Button(text="-", relief="raised", command=partial(takef, "-"), font="bold")
-    bdiv=tk.Button(text="/", relief="raised", command=partial(takef, "/"), font="bold")
-    
-    bdel=tk.Button(text="DEL", relief="raised", command=back, font="bold")
-    bac=tk.Button(text="AC", relief="raised", command=ac, font="bold")
+    bmul=win.create_button("x", partial(win.takef, "x"), "raised", "bold", 2, 3)
+    bdiv=win.create_button("/", partial(win.takef, "/"), "raised", "bold", 2, 4)
 
-    bper=tk.Button(text="%", relief="raised", command=per, font="bold")
+    bplus=win.create_button("+", partial(win.takef, "+"), "raised", "bold", 3, 3)
+    bmin=win.create_button("-", partial(win.takef, "-"), "raised", "bold", 3, 4)
 
-    bsin=tk.Button(text="sin", relief="raised", command=partial(fun, "sin"), font="bold")
-    bcos=tk.Button(text="cos", relief="raised", command=partial(fun, "cos"), font="bold")
-    btan=tk.Button(text="tan", relief="raised", command=partial(fun, "tan"), font="bold")
-    blog=tk.Button(text="log", relief="raised", command=partial(fun, "log"), font="bold")
-    broot=tk.Button(text="√", relief="raised", command=partial(fun, "√"), font="bold")
+    bper=win.create_button("%", win.per, "raised", "bold", 4, 3)
+    beq=win.create_button("=", win.eq, "raised", "bold", 4, 4)
 
-    b9.grid(row=1, column=0, sticky=tk.E+tk.W)
-    b8.grid(row=1, column=1, sticky=tk.E+tk.W)
-    b7.grid(row=1, column=2, sticky=tk.E+tk.W)
-    b6.grid(row=2, column=0, sticky=tk.E+tk.W)
-    b5.grid(row=2, column=1, sticky=tk.E+tk.W)
-    b4.grid(row=2, column=2, sticky=tk.E+tk.W)
-    b3.grid(row=3, column=0, sticky=tk.E+tk.W)
-    b2.grid(row=3, column=1, sticky=tk.E+tk.W)
-    b1.grid(row=3, column=2, sticky=tk.E+tk.W)
-    b0.grid(row=4, column=0, sticky=tk.E+tk.W)
-    bd0.grid(row=4, column=1, sticky=tk.E+tk.W)
-    bdec.grid(row=4, column=2, sticky=tk.E+tk.W)
-
-    bplus.grid(row=3, column=3, sticky=tk.E+tk.W)
-    bmin.grid(row=3, column=4, sticky=tk.E+tk.W)
-    bmul.grid(row=2, column=3, sticky=tk.E+tk.W)
-    bdiv.grid(row=2, column=4, sticky=tk.E+tk.W)
-
-    bdel.grid(row=1, column=3, sticky=tk.E+tk.W)
-    bac.grid(row=1, column=4, sticky=tk.E+tk.W)
-    bper.grid(row=4, column=3, sticky=tk.E+tk.W)
-    beq.grid(row=4, column=4, sticky=tk.E+tk.W)
-
-    bsin.grid(row=5, column=0, sticky=tk.E+tk.W)
-    bcos.grid(row=5, column=1, sticky=tk.E+tk.W)
-    btan.grid(row=5, column=2, sticky=tk.E+tk.W)
-    blog.grid(row=5, column=3, sticky=tk.E+tk.W)
-    broot.grid(row=5, column=4, sticky=tk.E+tk.W)
-
-    root.mainloop()
+    bsin=win.create_button("sin", partial(win.fun, "sin"), "raised", "bold", 5, 0)
+    bcos=win.create_button("cos", partial(win.fun, "cos"), "raised", "bold", 5, 1)
+    btan=win.create_button("tan", partial(win.fun, "tan"), "raised", "bold", 5, 2)
+    blog=win.create_button("log", partial(win.fun, "log"), "raised", "bold", 5, 3)
+    broot=win.create_button("√", partial(win.fun, "√"), "raised", "bold", 5, 4)
+        
+    win.mainloop()

@@ -1,10 +1,9 @@
 from cProfile import label
 from tkinter import *
 from tkinter import messagebox
+from turtle import bgcolor
 import requests as req
 import json
-from datetime import datetime
-import time
 
 def news():
     global key
@@ -74,6 +73,9 @@ def closeto():
 def save():
     messagebox.showerror(title="Save what!", message="We don't save news, we just show it.")
 
+def saveall():
+    messagebox.showinfo(title="Save", message="Use Save button, this does nothing.")
+
 def helping():
     messagebox.showwarning(title="Help", message="We don't provide any help!")
 
@@ -86,7 +88,8 @@ if __name__=="__main__":
     ws=root.winfo_screenwidth()
     hs=root.winfo_screenheight()
     root.geometry(f"{960}x{720}+{int((ws-720)/2)-80}+{20}")
-    root.minsize(1080, 720)
+    root.minsize(960, 720)
+    root.iconbitmap(r"C:\Users\Acer\3D Objects\Projects\python-workshop\py_to_exe/news.ico")
 
     menubar=Menu(root)
 
@@ -94,7 +97,7 @@ if __name__=="__main__":
     m1.add_command(label="New", command=dnews)
     m1.add_separator()
     m1.add_command(label="Save",command=save)
-    m1.add_command(label="Save All", command=save)
+    m1.add_command(label="Save All", command=saveall)
     m1.add_separator()
     m1.add_command(label="Quit", command=closeto)
     menubar.add_cascade(label="File", menu=m1)
@@ -132,6 +135,8 @@ if __name__=="__main__":
 
     scrolly=Scrollbar(mf, orient=VERTICAL, command=can.yview)
     scrolly.pack(fill=Y, side=RIGHT) 
+
+    scrollx=Scrollbar
 
     can.config(yscrollcommand=scrolly.set)
     can.bind_all("<MouseWheel>", lambda e: can.yview_scroll(int(-1*(e.delta/120)), "units"))
