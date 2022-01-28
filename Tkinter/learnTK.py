@@ -1,10 +1,12 @@
 from cProfile import label
+from http.server import ThreadingHTTPServer
 from msilib.schema import RadioButton
 from re import S
 import tkinter as tk
-from tkinter import HORIZONTAL, RIGHT, Button, Canvas, Frame, IntVar, Listbox, PhotoImage, Scale, Scrollbar, messagebox, Label
+from tkinter import BOTTOM, HORIZONTAL, RIGHT, Button, Canvas, Frame, IntVar, Listbox, PhotoImage, Scale, Scrollbar, messagebox, Label
 from tkinter.constants import ANCHOR, LEFT, SOLID, SUNKEN, X, Y, BOTH, TOP
 from tkinter.ttk import Label
+from turtle import right
 from typing import Text
 from PIL import Image, ImageTk
 import time
@@ -204,12 +206,16 @@ mf=Frame(root, border=2, relief=SOLID)
 mf.pack(fill=BOTH, expand=1)
 
 can=Canvas(mf)
-can.pack(side=LEFT, fill=BOTH, expand=1)
 
+scrollx=Scrollbar(mf, orient=tk.HORIZONTAL, command=can.xview)
+scrollx.pack(fill=X, side=BOTTOM, anchor="w")
 scrolly=Scrollbar(mf, orient=tk.VERTICAL, command=can.yview)
 scrolly.pack(fill=Y, side=RIGHT) 
+ 
+can.pack(side=LEFT, fill=BOTH, expand=1)
 
-can.config(yscrollcommand=scrolly.set)
+can.config(xscrollcommand=scrollx.set, yscrollcommand=scrolly.set)
+can.bind_all("<Shift-MouseWheel>", lambda e: can.xview_scroll(int(-1*(e.delta/120)), "units"))
 can.bind_all("<MouseWheel>", lambda e: can.yview_scroll(int(-1*(e.delta/120)), "units"))
 can.bind('<Configure>', lambda e: can.configure(scrollregion=can.bbox("all")))
 
@@ -217,6 +223,8 @@ wf=Frame(can)
 can.create_window((0,0), window=wf, anchor="nw")
 
 for i in range(100):
-    Button(wf, text=f"button {i+1}").pack(pady=10)
+    Button(wf, text=f"button HORIZONATAL {i+1}").grid(row=0, column=i)
+for i in range(100):
+   Button(wf, text=f"button VERTICAL {i+1}").grid(row=i+1, column=0)
 
 root.mainloop()

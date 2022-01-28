@@ -1,7 +1,7 @@
 from cProfile import label
 from tkinter import *
 from tkinter import messagebox
-from turtle import bgcolor
+from turtle import bgcolor, left
 import requests as req
 import json
 
@@ -38,6 +38,7 @@ def news():
 
 def start(pr):
     global nf
+    nf=None
     i = 0
     l=[]
     while (i < len(pr['articles'])):
@@ -55,8 +56,8 @@ def start(pr):
 
 def dnews():
     try:
-        for wid in f3.winfo_children():
-            wid.destroy()
+        for frames in f3.winfo_children():
+            frames.destroy()
     except Exception:
         pass
 
@@ -131,15 +132,18 @@ if __name__=="__main__":
     mf.pack(fill=BOTH, expand=1)
 
     can=Canvas(mf)
-    can.pack(side=LEFT, fill=BOTH, expand=1)
 
     scrolly=Scrollbar(mf, orient=VERTICAL, command=can.yview)
     scrolly.pack(fill=Y, side=RIGHT) 
 
-    scrollx=Scrollbar
+    scrollx=Scrollbar(mf, orient=HORIZONTAL, command=can.xview)
+    scrollx.pack(fill=X, side=BOTTOM)
 
-    can.config(yscrollcommand=scrolly.set)
+    can.pack(side=LEFT, fill=BOTH, expand=1)
+
+    can.config(yscrollcommand=scrolly.set, xscrollcommand=scrollx.set)
     can.bind_all("<MouseWheel>", lambda e: can.yview_scroll(int(-1*(e.delta/120)), "units"))
+    can.bind_all("<Shift-MouseWheel>", lambda e: can.xview_scroll(int(-1*(e.delta/120)), "units"))
     can.bind('<Configure>', lambda e: can.configure(scrollregion=can.bbox("all")))
 
     wf=Frame(can)
@@ -149,11 +153,11 @@ if __name__=="__main__":
     ffetch.pack()
     f3=Frame(wf)
     f3.pack()
-
-    nf=None
     
-    for i in range(100):
+    for i in range(20):
         Label(wf, text=f" ").pack(pady=10)
+    for i in range(100):
+        Label(wf, text=f" ").pack(pady=10, side=LEFT)
 
     root.protocol("WM_DELETE_WINDOW", closeto)
     root.bind_all('<Escape>', lambda e:close(e))
