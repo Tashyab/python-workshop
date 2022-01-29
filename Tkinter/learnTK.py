@@ -208,7 +208,7 @@ mf.pack(fill=BOTH, expand=1)
 can=Canvas(mf)
 
 scrollx=Scrollbar(mf, orient=tk.HORIZONTAL, command=can.xview)
-scrollx.pack(fill=X, side=BOTTOM, anchor="w")
+scrollx.pack(fill=X, side=BOTTOM)
 scrolly=Scrollbar(mf, orient=tk.VERTICAL, command=can.yview)
 scrolly.pack(fill=Y, side=RIGHT) 
  

@@ -1,4 +1,5 @@
 import math
+import time
 from tkinter import *
 from functools import partial
 
@@ -7,6 +8,7 @@ class Calc(Tk):
         super().__init__()
         sw=self.winfo_screenwidth()
         self.title("Calculator")
+        self.iconbitmap(r"C:\Users\Acer\3D Objects\Projects\python-workshop\Tkinter\calcr.ico")
         self.geometry(f"700x238+{(int)(sw/2)-200}+200")
         self.minsize(700, 238)
         self.maxsize(700, 238)
@@ -14,10 +16,54 @@ class Calc(Tk):
     def create_entry(self, w, bw, rel, row, col, f):
         self.en=Entry(self, width=w, borderwidth=bw, relief=rel, font=f)
         self.en.grid(row=row, column=col, columnspan=5, padx=10, pady=0)
+        # self.en.insert(0, 0)
 
     def create_button(self, name, fun, rel, ft, row, col):
         self.button=Button(text=name, command=fun, relief=rel, font=ft)
         self.button.grid(row=row, column=col, sticky=E+W)
+    
+    def error(self, e):
+        self.en.insert(0, f"{e}")
+
+    def show(self, d):
+        n=self.en.get()
+        l=len(n)   
+        if n!="" and (n[0].isalpha() or n[0]=="√"):
+            if n[0].isalpha():
+                k=4
+            else:
+                k=2
+            if d==0:
+                if n[k]=="0" and n[k+1]!=".":
+                    pass
+                else:
+                    self.en.insert(l-1, f"{d}")
+            elif d=="." and (d not in n):
+                if n=="":
+                    self.en.insert(l-1, f"{0}{d}")
+                else:
+                    self.en.insert(l-1, f"{d}")
+            elif (d!=".") and (d!=0):
+                if n[k]=="0" and n[k+1]!=".":
+                    self.en.delete(l-2, l-1)
+                    self.en.insert(l-2, f"{d}")
+                else:
+                    self.en.insert(l-1, f"{d}")
+        else:
+            if d==0:
+                if n!="0":
+                    self.en.insert(l, f"{d}")
+            elif d=="." and (d not in n):
+                if n=="":
+                    self.en.insert(l, f"{0}{d}")
+                else:
+                    self.en.insert(l, f"{d}")
+            elif (d!=".") and (d!=0):
+                if(n!="0"):
+                    self.en.insert(l, f"{d}")
+                else:
+                    self.en.delete(l-1, END)
+                    self.en.insert(l-1, f"{d}")
     
     def change_sign(self):
         n=self.en.get()
@@ -29,9 +75,8 @@ class Calc(Tk):
             self.en.delete(0, END)
         else:
             for ch in n:
-                if ch.isalpha() or ch=='√':
-                    ch=""
-                n1=n1+ch
+                if ch.isdigit():
+                    n1=n1+ch              
             if float(n1)<0:
                 n1=abs(float(n1))
                 n1=self.val_int(n1)
@@ -43,29 +88,18 @@ class Calc(Tk):
             self.en.delete(0, END)
             self.en.insert(0, f"{st}{self.val_int(n1)}")
 
-    def show(self, d):
-        n=self.en.get()
-        if d=="00" and n!="" and n!="0":
-            self.en.delete(0, END)
-            self.en.insert(0, f"{n}{d}")
-        elif d=="0" and n!="0":
-            self.en.delete(0, END)
-            self.en.insert(0, f"{n}{d}")
-        elif d=="." and (d not in n):
-            self.en.delete(0, END)
-            if n=="":
-                self.en.insert(0, f"{0}{n}{d}")
-            else:
-                self.en.insert(0, f"{n}{d}")
-        elif (d!=".") and (d!="0") and (d!="00"):
-            self.en.delete(0, END)
-            if(n!="0"):
-                self.en.insert(0, f"{n}{d}")
-            else:
-                self.en.insert(0, f"{d}")
-
     def back(self):
-        self.en.delete(len(self.en.get())-1, END)
+        n=self.en.get()
+        l=len(n)
+        if n[l-1].isdigit():
+            self.en.delete(l-1, END)
+        elif n[l-1]==')':
+            if n[l-2]=='(':
+                self.en.delete(0, END)
+            else:
+                self.en.delete(l-2, l-1)
+        else:
+            self.en.delete(0, END)
 
     def ac(self):
         self.en.delete(0, END)
@@ -73,7 +107,14 @@ class Calc(Tk):
     def getfn(self):
         global fn
         fn=self.en.get()
-        self.en.delete(0, END)
+        st=""
+        if (fn[0].isalpha() or fn[0]=="√"):
+            for ch in fn:
+                if ch.isalpha() or ch=='√':
+                    st=st+ch
+            self.fun(st)
+        else:
+            self.en.delete(0, END)
 
     def takef(self, op):
         global v
@@ -94,7 +135,18 @@ class Calc(Tk):
 
     def eq(self):
         sn=self.en.get()
-        if v=="+":
+        global fn
+        try:
+            if fn=="":
+                fn="0"
+            if sn=="":
+                sn=0
+        except Exception:
+            pass
+        if(v=="sin") or(v=="cos") or (v=="tan") or (v=="log") or (v=="√"):
+            self.fun(v)
+
+        elif v=="+":
             self.en.delete(0, END)
             sum=(float)(fn)+(float)(sn)
             self.en.insert(0, f"{self.val_int(sum)}")
@@ -111,10 +163,11 @@ class Calc(Tk):
 
         elif(v=="/"):
             self.en.delete(0, END)
-            di=(float)(fn)/(float)(sn)
-            self.en.insert(0, f"{self.val_int(di)}")   
-        elif(v=="sin") or(v=="cos") or (v=="tan") or (v=="log") or (v=="√"):
-            self.fun(v)
+            try:
+                di=(float)(fn)/(float)(sn)
+                self.en.insert(0, f"{self.val_int(di)}") 
+            except Exception:
+                self.error("Can't divide by 0....")
     
 
     def fun(self, f):
@@ -122,9 +175,8 @@ class Calc(Tk):
         n1=self.en.get()
         n=""
         for ch in n1:
-            if ch.isalpha() or ch=='√':
-                ch=""
-            n=n+ch
+            if ch.isnumeric():
+                n=n+ch          
         self.en.delete(0, END)
         if n!='':
             if f=="tan":
@@ -146,19 +198,20 @@ class Calc(Tk):
                 n=float(n)
                 if(n>0):
                     n=math.log10(n)
+                    self.en.insert(0, f"{self.val_int(n)}")
                 else:
-                    n=0
-                self.en.insert(0, f"{self.val_int(n)}")
+                    self.error("Invalid input")                
 
             elif f=="√":
                 n=float(n)
                 if(n>0):
                     n=math.sqrt(n)
+                    self.en.insert(0, f"{self.val_int(n)}")
                 else:
-                    n=0
-                self.en.insert(0, f"{self.val_int(n)}")
+                    self.error("Invalid input")
+                
         else:
-            self.en.insert(0, f"{f}")
+            self.en.insert(0, f"{f}()")
             v=f
 
 

@@ -1,7 +1,5 @@
-from cProfile import label
 from tkinter import *
 from tkinter import messagebox
-from turtle import bgcolor, left
 import requests as req
 import json
 
@@ -9,7 +7,7 @@ def news():
     global key
     global fetch_text
     fetch_text=Label(ffetch, text="Fetching news....", font="40")
-    fetch_text.pack(padx=400)
+    fetch_text.pack()
     f3.update()
     q=optvar.get()
     try:
@@ -90,24 +88,24 @@ if __name__=="__main__":
     hs=root.winfo_screenheight()
     root.geometry(f"{960}x{720}+{int((ws-720)/2)-80}+{20}")
     root.minsize(960, 720)
-    root.iconbitmap(r"C:\Users\Acer\3D Objects\Projects\python-workshop\py_to_exe/news.ico")
+    root.iconbitmap(r"C:\Users\Acer\3D Objects\Projects\python-workshop\Tkinter/newsp.ico")
 
     menubar=Menu(root)
 
     m1=Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="File", menu=m1)
     m1.add_command(label="New", command=dnews)
     m1.add_separator()
     m1.add_command(label="Save",command=save)
     m1.add_command(label="Save All", command=saveall)
     m1.add_separator()
     m1.add_command(label="Quit", command=closeto)
-    menubar.add_cascade(label="File", menu=m1)
 
     m2=Menu(menubar, tearoff=0)
+    menubar.add_cascade(label="Help", menu=m2)
     m2.add_command(label="Help", command=helping)
     m2.add_separator()
     m2.add_command(label="Send feedback", command=feedback)
-    menubar.add_cascade(label="Help", menu=m2)
 
     root.config(menu=menubar)
 
@@ -121,7 +119,7 @@ if __name__=="__main__":
     Radiobutton(f1, text="Business", variable=optvar, value="business").pack()
     optvar.set("top")
     
-    f2=Frame(f1)
+    f2=Frame(root)
     f2.pack()
     sb=Button(f2, text="SUBMIT", command=news, relief=RAISED, borderwidth=3)
     sb.pack(side=LEFT, anchor="n", padx=5, pady=5)
