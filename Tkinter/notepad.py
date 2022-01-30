@@ -1,9 +1,5 @@
-from operator import truediv
 from tkinter import * 
 from functools import partial
-from turtle import left, right
-
-from click import command
 
 class Note(Tk):
     def __init__(self):
