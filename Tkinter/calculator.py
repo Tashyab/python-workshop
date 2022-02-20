@@ -9,9 +9,9 @@ class Calc(Tk):
         sw=self.winfo_screenwidth()
         self.title("Calculator")
         self.iconbitmap(r"C:\Users\Acer\3D Objects\Projects\python-workshop\Tkinter\calcr.ico")
-        self.geometry(f"700x238+{(int)(sw/2)-280}+200")
-        self.minsize(700, 238)
-        self.maxsize(700, 238)
+        self.geometry(f"695x238+{(int)(sw/2)-280}+200")
+        self.minsize(695, 238)
+        self.maxsize(695, 238)
         self.config(bg="black")
 
     def create_entry(self, w, bw, rel, row, col, f):
@@ -91,6 +91,7 @@ class Calc(Tk):
         else:
             self.extn()
         self.en.delete(0, END)
+        self.en.insert(0, "0")
 
     def takef(self, op):
         global v
@@ -111,26 +112,23 @@ class Calc(Tk):
 
     def eq(self):
         sn=self.en.get()
+        global nx
         global fn
-        
+        self.en.delete(0, END)
         try:
-            if v=="+":
-                self.en.delete(0, END)
+            if v=="+":              
                 sum=(float)(fn)+(float)(sn)
                 self.en.insert(0, f"{self.val_int(sum)}")
 
             elif(v=="-"):
-                self.en.delete(0, END)
                 diff=(float)(fn)-(float)(sn)
                 self.en.insert(0, f"{self.val_int(diff)}")
 
             elif(v=="x"):
-                self.en.delete(0, END)
                 pro=(float)(fn)*(float)(sn)
                 self.en.insert(0, f"{self.val_int(pro)}")
 
             elif(v=="/"):
-                self.en.delete(0, END)
                 try:
                     di=(float)(fn)/(float)(sn)
                     self.en.insert(0, f"{self.val_int(di)}") 
