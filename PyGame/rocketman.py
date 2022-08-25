@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import pygame
 from pygame import mixer
 from pygame import font
@@ -9,6 +10,7 @@ try:
     pygame.mixer.init()
 except Exception:
     pass
+
 #SCREEN
 FPS=45
 SW=1120
@@ -20,6 +22,8 @@ BACK= pygame.transform.scale(BACK,(SW,SH))
 PLAYER= pygame.image.load('assets/char.png')
 PLAYER_RED= pygame.image.load('assets/charR2.png')
 PLAYER_BLUE= pygame.image.load('assets/charB2.png')
+
+#Colors
 WHITE= (255,255,255)
 BLACK= (0,0,0)
 RED= (255,0,0)
@@ -30,6 +34,8 @@ ORANGE=(255,165,0)
 
 FONT=pygame.font.SysFont('broadway', 50)
 WALL=pygame.Rect(SW/2+5, 0, 10, SH)
+UPWALL=pygame.Rect(0, 0, SW, 10)
+DOWNWALL=pygame.Rect(0, SH-10, SW, 10)
 
 #Ball
 BD= 30 
@@ -65,19 +71,19 @@ def welcomeScreen():
 def draw_screen(pl,pr,bo):
     SC.blit(BACK,(0,0))
     pygame.draw.rect(SC, ORANGE, WALL)
+    pygame.draw.rect(SC, ORANGE, UPWALL)
+    pygame.draw.rect(SC, ORANGE, DOWNWALL)
     SC.blit(P1, (pl.x, pl.y))
     SC.blit(P2, (pr.x, pr.y))
     SC.blit(BALL, (bo.x,bo.y))
     pygame.display.update()
-        
+
 def game():
     clock=pygame.time.Clock()
     pl=pygame.Rect(100, SH/2-PH/2, PW, PH)
     pr=pygame.Rect(SW-100-PW, SH/2-PH/2, PW, PH)
     bo=pygame.Rect(BX, BY, BD, BD)
     
-    bvx=5
-    bvy=0
     
     run= True
     while run:
@@ -88,18 +94,18 @@ def game():
         
         press=pygame.key.get_pressed()
         
-        if press[pygame.K_UP] and (pr.y>0):
+        if press[pygame.K_UP] and (pr.y>10):
             pr.y-=PV
-        if press[pygame.K_DOWN] and (pr.y+PH<SH):
+        if press[pygame.K_DOWN] and (pr.y+PH<SH-10):
             pr.y+=PV
         if press[pygame.K_LEFT] and (pr.x>WALL.x+10):
             pr.x-=PV
         if press[pygame.K_RIGHT] and (pr.x+PW-30<SW):
             pr.x+=PV
         
-        if press[pygame.K_w] and (pl.y>0):
+        if press[pygame.K_w] and (pl.y>10):
             pl.y-=PV
-        if press[pygame.K_s] and (pl.y+PH<SH):
+        if press[pygame.K_s] and (pl.y+PH<SH-10):
             pl.y+=PV
         if press[pygame.K_a] and (pl.x+30>0):
             pl.x-=PV
@@ -107,7 +113,6 @@ def game():
             pl.x+=PV         
         
         draw_screen(pl, pr, bo)
-        
 
 if __name__=="__main__":
     welcomeScreen()

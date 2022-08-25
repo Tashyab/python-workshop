@@ -1,0 +1,21 @@
+Date,company,Price,Price to earnings ratio (P/E)
+2017-06-05,Company,,
+,Facebook,155.0,37.1
+,Google,955.0,32.0
+,Microsoft,66.0,30.31
+2017-06-06,Company,,
+,Facebook,150.0,36.98
+,Google,987.0,31.3
+,Microsoft,69.0,30.56
+2017-06-07,Company,,
+,Facebook,153.0,36.78
+,Google,963.0,31.7
+,Microsoft,62.0,30.46
+2017-06-08,Company,,
+,Facebook,155.0,36.11
+,Google,1000.0,31.2
+,Microsoft,61.0,30.11
+2017-06-09,Company,,
+,Facebook,156.0,37.07
+,Google,1012.0,30.0
+,Microsoft,66.0,31.0

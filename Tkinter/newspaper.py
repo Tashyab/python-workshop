@@ -44,6 +44,7 @@ def start(pr):
             if key == 'title':
                 l.append(pr['articles'][i]['title'])
         i += 1
+        
     f=Frame(f3, border=2, relief=SOLID)
     f.pack(before=nf, pady=5, padx=80)
     nf=f

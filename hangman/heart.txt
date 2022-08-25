@@ -1,0 +1,23 @@
+It is very well opined that “Physical health will help you all through the war but mental health will help you win the war”. When a person is diagnosed with chronic diseases like heart disease, cancer and diabetes, the person has to cope up with not only the adverse physical changes but also has to face the reality with a strong mind and will power. 
+
+India is currently performing worse than the world average, and is currently ranked 66 in the world health security index and the prospects of improvement is very narrow. If the upsurge in the cases of chronic diseases is not regulated now, then it will become hazardous for the future India. 
+
+Heart diseases own a major portion in the total number of chronic disease cases.
+India accounts for one-fifth of the total deaths occurring from stroke and ischemic heart disease, especially in younger adults according to the World Health Organisation.
+One in five elderly persons in India has mental health issues. Around 75 percent of them suffer from a chronic disease, and 40 percent have some or other disability. These are the findings of the Longitudinal Ageing Study of India (LASI) released by the health ministry.
+
+“He who has health has hope, and he who has hope has everything.”
+
+This quote has instilled in us a motive to not only spread awareness about heart diseases but also provide them mental support to help them adapt to the changes. So, to deal with the same we are designing an app which will assist in the recovery journey.
+
+The highlight of the app is the discussion forum that will allow its users to share their recovery experiences and interact, thus providing essential moral support to each other. In addition to the same doctors can also share their opinion with the users.
+ 
+The doctors can also conduct awareness sessions, about which the users will be notified.
+
+Our application will also allow the users to interact with people who have undergone the similar conditions and could provide necessary help to the users for whom reaching a doctor is not feasible.
+
+It will recommend essential exercises and diet to be followed to reduce the risk of any future heart related complications.
+
+In addition our app will notify the user about the intake timings of the medicine and the exercises to be done, also about the next appointment date.
+
+

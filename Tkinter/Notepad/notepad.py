@@ -158,7 +158,7 @@ class Note(Tk):
         self.trydestroyfindbox()
         self.findfr=Frame(self, borderwidth=2, background="black")
 
-        self.replb=Button(self.findfr, text="⟱", background="black", foreground="white", height=1,
+        self.replb=Button(self.findfr, text="⟱", background="black", foreground="white",
          activebackground="black", activeforeground="white", borderwidth=0, command=lambda: self.replacing(1))
         self.replb.grid(row=0, column=0)
         
@@ -167,22 +167,22 @@ class Note(Tk):
         self.findbox.insert(0, "Find")
         self.findbox.bind("<FocusIn>", lambda e: (self.findbox.delete(0, END)))      
         
-        clearb=Button(self.findfr, text="Clear", background="black", foreground="white", height=1,
+        clearb=Button(self.findfr, text="Clear", background="black", foreground="white",
          activebackground="black", activeforeground="white", borderwidth=0, command=partial(self.findbox.delete, 0, END))
         clearb.grid(row=0, column=2)      
         
-        delb=Button(self.findfr, text="[X]", background="black", foreground="red", height=1,activebackground="black", activeforeground="white", borderwidth=0, command=self.trydestroyfindbox)
+        delb=Button(self.findfr, text="[X]", background="black", foreground="red",activebackground="black", activeforeground="white", borderwidth=0, command=self.trydestroyfindbox)
         delb.grid(row=0, column=7)
         
-        upb=Button(self.findfr, text="▲", background="black", foreground="white", height=1,
+        upb=Button(self.findfr, text="▲", background="black", foreground="white",
          activebackground="black", activeforeground="white", borderwidth=0)
         upb.grid(row=0, column=3)
         
-        dob=Button(self.findfr, text="▼", background="black", foreground="white", height=1,
+        dob=Button(self.findfr, text="▼", background="black", foreground="white",
          activebackground="black", activeforeground="white", borderwidth=0)
         dob.grid(row=0, column=4)
         
-        searchb=Button(self.findfr, text="Search", background="black", foreground="white", height=1,
+        searchb=Button(self.findfr, text="Search", background="black", foreground="white",
          activebackground="black", activeforeground="white", borderwidth=0, command=self.searchintext)
         searchb.grid(row=0, column=5)
         
@@ -198,17 +198,17 @@ class Note(Tk):
             self.replb['state']=DISABLED
         except Exception:
             pass
-        upb=Button(self.replfr, text="⟰", background="black", foreground="white", height=1, activebackground="black", activeforeground="white", borderwidth=0, command=lambda: [self.replfr.destroy(), self.enablebut()])
+        upb=Button(self.replfr, text="⟰", background="black", foreground="white", activebackground="black", activeforeground="white", borderwidth=0, command=lambda: [self.replfr.destroy(), self.enablebut()])
         upb.grid(row=0, column=0)
         self.replbox=Entry(self.replfr, width=20, background="#4C4A49", foreground="white", borderwidth=0)
         self.replbox.grid(row=0, column=1)
         self.replbox.insert(0, "Replace")
         self.replbox.bind("<FocusIn>", lambda e: (self.replbox.delete(0, END)))          
-        clearb=Button(self.replfr, text="Clear", background="black", foreground="white", height=1, activebackground="black", activeforeground="white", borderwidth=0, command=partial(self.replbox.delete, 0, END))
+        clearb=Button(self.replfr, text="Clear", background="black", foreground="white", activebackground="black", activeforeground="white", borderwidth=0, command=partial(self.replbox.delete, 0, END))
         clearb.grid(row=0, column=2)
-        replaceallb=Button(self.replfr, text="Replace all", background="black", foreground="white", height=1, activebackground="black", activeforeground="white", borderwidth=0)
+        replaceallb=Button(self.replfr, text="Replace all", background="black", foreground="white", activebackground="black", activeforeground="white", borderwidth=0)
         replaceallb.grid(row=0, column=3)
-        replaceb=Button(self.replfr, text="Replace", background="black", foreground="white", height=1, activebackground="black", activeforeground="white", borderwidth=0)
+        replaceb=Button(self.replfr, text="Replace", background="black", foreground="white", activebackground="black", activeforeground="white", borderwidth=0)
         replaceb.grid(row=0, column=4)
 
         self.replfr.place(relx=0.5, rely=0.18, anchor=CENTER)
@@ -221,8 +221,8 @@ class Note(Tk):
         for obj in findvar:
             self.ta.tag_add("sel", float(obj.start()+1), float(obj.end()))
 
-            # self.ta.insert(END, "\napple")
-            # print(float(obj.start()+1), float(obj.end()))
+            self.ta.insert(END, "\napple")
+            print(float(obj.start()+1), float(obj.end()))
             
     def menubar(self):
         self.mbar=Menu(self, background="black", foreground="white", borderwidth=0)
