@@ -139,7 +139,6 @@ def timer():
                     speak("Tell me appropriate time.")
                     continue
 
-
 def calculator():
     if ('+' in query) or ('sum' in query) or ('add' in query):
         pt = re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
@@ -169,7 +168,7 @@ def calculator():
         else:
             speak("Provide at least two numbers and try again.")
 
-    elif ('*' in query) or ('multi' in query) or ('into' in query):
+    elif ('*' in query) or ('multi' in query) or ('into' in query) or ('product' in query):
         pt = re.compile(r"[0-9]+[.][0-9]+|[0-9]+")
         lpt = pt.findall(query)
         pro = 1
@@ -290,7 +289,7 @@ def news(query):
 
 def greet_reply(query_start):
     if ('assistant' in query_start) or ('google' in query_start) or ('jarvis' in query_start) or ('siri' in query_start) or ('alexa' in query_start):
-        speak("My name is Rama, you motherfucker!")
+        speak("My name is Ultron, you motherfucker!")
         return 1
     elif ('ultron' in query_start):
         return 1
@@ -308,12 +307,10 @@ def greet_reply(query_start):
 # speech_recognition.UnknownValueError
 # wikipedia.exceptions.DisambiguationError
 
-
 if __name__ == "__main__":
     greet()
     while True:
         n = int(random.random()*10)
-        dicel = [1, 2, 3, 4, 5, 6]
         query_start = takecommand().lower()
         if greet_reply(query_start) == 1:
             speak("What can I do for you?")
@@ -321,7 +318,7 @@ if __name__ == "__main__":
             if 'timer' in query:
                 timer()
             elif ('dice' in query) or ('die' in query):
-                dc = random.choice(dicel)
+                dc = random.choice([1, 2, 3, 4, 5, 6])
                 speak("rolling")
                 speak("and rolling")
                 speak(f"and it is.. {dc} times fuck you.")
@@ -406,7 +403,7 @@ if __name__ == "__main__":
                 webbrowser.get('chrome').open(
                     f"https://www.google.co.in/search?q={query}")
 
-            elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('subtract' in query) or ('divide' in query):
+            elif ('calculate' in query) or ('add' in query) or ('sum' in query) or ('multiply' in query) or ('subtract' in query) or ('divide' in query) or ('product' in query):
                 calculator()
 
             elif 'thank' in query:
