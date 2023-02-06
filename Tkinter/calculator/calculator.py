@@ -8,7 +8,7 @@ class Calc(Tk):
         super().__init__()
         sw=self.winfo_screenwidth()
         self.title("Calculator")
-        self.iconbitmap(r"C:\Users\Acer\3D Objects\Projects\python-workshop\Tkinter\calcr.ico")
+        self.iconbitmap(r"C:\Users\Acer\3D Objects\Projects\python-workshop\Tkinter\calculator\calcr.ico")
         self.geometry(f"695x238+{(int)(sw/2)-280}+200")
         self.minsize(695, 238)
         self.maxsize(695, 238)
@@ -199,8 +199,8 @@ if __name__=="__main__":
     b0=win.create_button("0", partial(win.show, 0), "raised", "bold", 4, 2, "#383838", "#212121")
     bdec=win.create_button(".", partial(win.show, "."), "raised", "bold", 4, 3, "#383838", "#212121")
 
-    bdel=win.create_button("⌫", win.back, "raised", "bold", 1, 0, "#212121", "#212121")
-    bac=win.create_button("AC", win.ac, "raised", "bold", 1, 4, "#212121", "#212121")
+    bdel=win.create_button("⌫", win.back, "raised", "bold", 1, 4, "#212121", "#212121")
+    bac=win.create_button("AC", win.ac, "raised", "bold", 1, 0, "#212121", "#212121")
 
     bmul=win.create_button("x", partial(win.takef, "x"), "raised", "bold", 2, 0, "#212121", "#383838")
     bdiv=win.create_button("/", partial(win.takef, "/"), "raised", "bold", 2, 4, "#212121", "#383838")

@@ -89,7 +89,7 @@ if __name__=="__main__":
     hs=root.winfo_screenheight()
     root.geometry(f"{960}x{720}+{int((ws-720)/2)-80}+{20}")
     root.minsize(960, 720)
-    root.iconbitmap(r"C:\Users\Acer\3D Objects\Projects\python-workshop\Tkinter/newsp.ico")
+    root.iconbitmap(r"C:\Users\Acer\3D Objects\Projects\python-workshop\Tkinter/newspaper/newsp.ico")
 
     menubar=Menu(root)
 

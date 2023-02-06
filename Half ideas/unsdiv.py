@@ -1,4 +1,3 @@
-
 m=input("Enter the value of Divisor(M) in binary: ")
 q=input("Enter the value of dividend(Q) in binary: ")
 a="".join(["0" for i in range(len(q)+1)])

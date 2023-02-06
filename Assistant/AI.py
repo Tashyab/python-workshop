@@ -215,7 +215,7 @@ def wiki(query):
 
 def sendmail():
     speak("Enter your email")
-    print("Before entering your email make sure to allow less secure to apps use your account.\n"
+    print("Before entering your email make sure to allow less secure apps to use your account.\n"
           "| Go to your account > Security > Toggle to allow less secue apps |")
     print("Enter your email:")
     sender_email = input()
