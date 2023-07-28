@@ -121,7 +121,6 @@ def welcomeScreen():
             pygame.display.update()
             clock.tick(FPS)
 
-
 def score_update(plsc, prsc):
     plsc_text = FONT.render(f"{plsc}", 1, WHITE)
     prsc_text = FONT.render(f"{prsc}", 1, WHITE)
