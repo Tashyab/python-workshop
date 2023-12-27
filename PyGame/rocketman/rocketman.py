@@ -25,6 +25,9 @@ PLAYER_RED = pygame.image.load('assets/charR2.png')
 PLAYER_BLUE = pygame.image.load('assets/charB2.png')
 HIT_SOUND = pygame.mixer.Sound('assets/hit.wav')
 POINT_SOUND = pygame.mixer.Sound('assets/point.wav')
+WIN_SOUND = pygame.mixer.Sound('assets/sci-fi.wav')
+
+pygame.mixer.music.load('assets/welcome.mp3')
 
 # Colors
 WHITE = (255, 255, 255)
@@ -41,10 +44,13 @@ WALL = pygame.Rect(SW/2+5, 0, 10, SH)
 UPWALL = pygame.Rect(0, 0, SW, 10)
 DOWNWALL = pygame.Rect(0, SH-10, SW, 10)
 
+# MIDWALL = pygame.transform.scale(pygame.image.load("assets/wall.png"), (10, SH))
+# BOUNDARY = pygame.transform.scale(pygame.transform.rotate(pygame.image.load("assets/wall.png"), 90), (SW, 10))
+
 # Ball
 BD = 30
 BALL = pygame.transform.scale(pygame.image.load("assets/ball.png"), (BD, BD))
-BX = WALL.x-10
+BX = 555
 BY = SH/2
 BV = 6
 
@@ -103,8 +109,14 @@ def handle_collision(pl, pr, bo):
                         HIT_SOUND.play()
 
 def welcomeScreen():
+    if(not pygame.mixer.music.get_busy()):
+        pygame.mixer.music.play()
     text = FONT.render("<Press spacebar to start>", 1, WHITE)
     clock = pygame.time.Clock()
+    blink_interval = 400
+    last_blink_time = 0
+    is_text_visible = True
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -112,14 +124,25 @@ def welcomeScreen():
                 sys.exit()
             elif(event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE):
                 return
-            else:
-                SC.blit(BACK, (0, 0))
-                SC.blit(PLAYER, (50, SH/2-50))
-                SC.blit(pygame.transform.flip(
-                    PLAYER, True, False), (800, SH/2-50))
-                SC.blit(text, (225, 50))
-            pygame.display.update()
-            clock.tick(FPS)
+
+        # Blinking logic
+        current_time = pygame.time.get_ticks()
+        if current_time - last_blink_time >= blink_interval:
+            last_blink_time = current_time
+            is_text_visible = not is_text_visible
+
+        SC.blit(BACK, (0, 0))
+        SC.blit(PLAYER_RED, (50, SH/2-50))
+        SC.blit(pygame.transform.flip(PLAYER_BLUE, True, False), (800, SH/2-50))
+
+        # Blinking
+        if is_text_visible:
+            SC.blit(text, (225, 50))
+            SC.blit(PLAYER_BLUE, (50, SH/2-50))
+            SC.blit(pygame.transform.flip(PLAYER_RED, True, False), (800, SH/2-50))
+
+        pygame.display.update()
+        clock.tick(FPS)
 
 def score_update(plsc, prsc):
     plsc_text = FONT.render(f"{plsc}", 1, WHITE)
@@ -130,15 +153,19 @@ def score_update(plsc, prsc):
 def draw_screen(pl, pr, bo, plsc, prsc ):
     SC.blit(BACK, (0, 0))
     score_update(plsc, prsc)
-    pygame.draw.rect(SC, ORANGE, WALL)
-    pygame.draw.rect(SC, ORANGE, UPWALL)
-    pygame.draw.rect(SC, ORANGE, DOWNWALL)
+    pygame.draw.rect(SC, (244,140,6), WALL)
+    pygame.draw.rect(SC, (244,140,6), UPWALL)
+    pygame.draw.rect(SC, (244,140,6), DOWNWALL)
+    # SC.blit(MIDWALL, (SW/2+5, 0))
+    # SC.blit(BOUNDARY, (0, 0))
+    # SC.blit(BOUNDARY, (0, SH-10))
     SC.blit(P1, (pl.x, pl.y))
     SC.blit(P2, (pr.x, pr.y))
     SC.blit(BALL, (bo.x, bo.y))
     pygame.display.update()
 
 def game():
+    pygame.mixer.music.rewind()
     clock = pygame.time.Clock()
     pl = pygame.Rect(100, SH/2-PH/2, PW, PH)
     pr = pygame.Rect(SW-100-PW, SH/2-PH/2, PW, PH)
@@ -147,6 +174,8 @@ def game():
     prsc = 0
     run = True
     while run:
+        if(not pygame.mixer.music.get_busy()):
+            pygame.mixer.music.play()
         clock.tick(FPS)
         for event in pygame.event.get():
             if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
@@ -209,7 +238,10 @@ def game():
                     col = WHITE
                 win_text_rend = FONT_LARGE.render(f"{win_text}", 1, col)
                 SC.blit(win_text_rend, (SW//2 - win_text_rend.get_width()//2, SH//2))
+                if soundcheck == 1:
+                    WIN_SOUND.play()
                 pygame.display.update()
+            return
 
             count = 0
             pl.x = 100
@@ -226,5 +258,7 @@ def game():
 
 
 if __name__ == "__main__":
-    welcomeScreen()
-    game()
+    pygame.mixer.music.play()
+    while(True):
+        welcomeScreen()
+        game()

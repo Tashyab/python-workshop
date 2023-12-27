@@ -30,7 +30,7 @@ def find(s, ch):
     return [i for i, ltr in enumerate(s) if ltr == ch]
 
 def comp():
-    with open (r"C:\Users\Acer\3D Objects\Projects\python-workshop\hangman\words10.txt") as f:
+    with open (r"C:\Users\Acer\3D Objects\Projects\python-workshop\Weird projects\hangman\words10.txt") as f:
         word_list=f.read().splitlines()
     word=random.choice(word_list).lower()
     return word

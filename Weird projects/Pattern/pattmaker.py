@@ -380,7 +380,6 @@ def setinpen(n):
         pen.down()
     
 def button_dots():
-    pen.speed(8)
     cody = -50
     for _ in range(3):
         codx = -50
@@ -410,7 +409,7 @@ def button_dots():
 
 nlist = []
 strnum = ''
-with open("patternexact4.txt", "r") as f:
+with open("Pattern/patternexact4.txt", "r") as f:
     txt = f.read()
     for num in txt:
         if(num != '\n'):
@@ -418,6 +417,7 @@ with open("patternexact4.txt", "r") as f:
         else:
             nlist.append(int(strnum))
             strnum = ''
+
 
 for i, num in enumerate(nlist, 0):
     button_dots()
