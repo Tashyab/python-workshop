@@ -152,7 +152,6 @@ class Calc(Tk):
                 except Exception:
                     self.error("Can't divide by 0")
 
-            print(fn, sn, res)
             self.en.insert(0, f"{self.val_int(res)}")
             if key == True:
                 fn = sn
