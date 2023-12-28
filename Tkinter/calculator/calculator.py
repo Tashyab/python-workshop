@@ -9,9 +9,10 @@ class Calc(Tk):
         sw=self.winfo_screenwidth()
         self.title("Calculator")
         self.iconbitmap(r"C:\Users\Acer\3D Objects\Projects\python-workshop\Tkinter\calculator\calcr.ico")
-        self.geometry(f"695x238+{(int)(sw/2)-280}+200")
-        self.minsize(695, 238)
-        self.maxsize(695, 238)
+        self.geometry(f"575x195+{sw//2-280}+200")
+        # self.maxsize(575, 195)
+        # self.minsize(575, 195)
+        self.resizable(False, False)
         self.config(bg="black")
 
     def create_entry(self, w, bw, rel, row, col, f):
@@ -76,6 +77,10 @@ class Calc(Tk):
             self.en.insert(0, "0")
 
     def ac(self):
+        global fn
+        global sn
+        fn = 0
+        sn = 0
         self.en.delete(0, END)
         self.en.insert(0, "0")
 
@@ -85,6 +90,8 @@ class Calc(Tk):
 
     def getfn(self):
         global fn
+        global key
+        key = True
         fn=self.en.get()
         if fn=="":
             fn=nx
@@ -114,28 +121,44 @@ class Calc(Tk):
         sn=self.en.get()
         global nx
         global fn
+        global key
+        res = sn
         self.en.delete(0, END)
         try:
-            if v=="+":              
-                sum=(float)(fn)+(float)(sn)
-                self.en.insert(0, f"{self.val_int(sum)}")
+            if v=="+":
+                if(key == False):
+                    res=(float)(sn)+(float)(fn)
+                else:      
+                    res=(float)(fn)+(float)(sn)
 
             elif(v=="-"):
-                diff=(float)(fn)-(float)(sn)
-                self.en.insert(0, f"{self.val_int(diff)}")
+                if(key == False):
+                    res=(float)(sn)-(float)(fn)
+                else:      
+                    res=(float)(fn)-(float)(sn)
 
             elif(v=="x"):
-                pro=(float)(fn)*(float)(sn)
-                self.en.insert(0, f"{self.val_int(pro)}")
+                if(key == False):
+                    res=(float)(sn)*(float)(fn)
+                else:      
+                    res=(float)(fn)*(float)(sn)
 
             elif(v=="/"):
                 try:
-                    di=(float)(fn)/(float)(sn)
-                    self.en.insert(0, f"{self.val_int(di)}") 
+                    if(key == False):
+                        res=(float)(sn)/(float)(fn)
+                    else:      
+                        res=(float)(fn)/(float)(sn)
                 except Exception:
                     self.error("Can't divide by 0")
-        except Exception:
-            pass
+
+            print(fn, sn, res)
+            self.en.insert(0, f"{self.val_int(res)}")
+            if key == True:
+                fn = sn
+                key = False
+        except Exception as e:
+            self.en.insert(0, f"{self.val_int(res)}")
 
     def fun(self, f):
         global v
@@ -145,8 +168,11 @@ class Calc(Tk):
         self.en.delete(0, END)
         if f=="tan":
             n=float(n)
-            n=math.tan(math.radians(n))
-            self.en.insert(0, f"{self.val_int(n)}")
+            if(n % 90 == 0 and n % 20 != 0):
+                self.error("Undefined")
+            else:
+                n=math.tan(math.radians(n))
+                self.en.insert(0, f"{self.val_int(n)}")
             
         elif f=="sin":
             n=float(n)
