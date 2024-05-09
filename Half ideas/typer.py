@@ -1,11 +1,16 @@
 import random
+import sys
+
 l=[]
 st=""
 n=int(input("Enter the number characters: "))
 i=0
 print("Entern the characters-")
 while(i<n):
-    ch=input()
+    ch= input()
+    if len(ch)>1:
+        print("Enter a single character only!")
+        continue
     l.append(ch)
     i+=1
 i=0
