@@ -28,7 +28,6 @@ for method in methods:
         # print(f"{method} and {loc}")
         bottom_right = (loc[0]+tw, loc[1]+th)
         cv.rectangle(img_cpy, loc, bottom_right, (0, 165, 255), 2)
-    
     cv.imshow("Identify", img_cpy)
     cv.waitKey(0)
 

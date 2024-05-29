@@ -4,7 +4,7 @@ import numpy as np
 cap = cv.VideoCapture(0)
 while True:
     isTrue, frame = cap.read()
-    frame = cv.resize(frame, (frame.shape[0], frame.shape[0]))
+    frame = cv.flip(cv.resize(frame, (frame.shape[0], frame.shape[0])), 1)
     img = np.zeros(frame.shape, np.uint8)
     # width = int(cap.get(3))
     # height = int(cap.get(4))

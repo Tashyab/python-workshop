@@ -1,0 +1,6 @@
+# Ignored files
+
+finger_digits.h5
+finger_digits.keras
+fingering.keras
+fingeringSmall.keras
