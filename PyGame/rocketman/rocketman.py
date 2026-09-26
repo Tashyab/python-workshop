@@ -18,16 +18,17 @@ SW = 1120
 SH = 630
 SC = pygame.display.set_mode((SW, SH))
 pygame.display.set_caption("Rocketman")
-BACK = pygame.image.load('assets/back3.jpg')
+ROOT = 'D:/Projects/python-workshop/PyGame/rocketman/assets/'
+BACK = pygame.image.load(f'{ROOT}back3.jpg')
 BACK = pygame.transform.scale(BACK, (SW, SH))
-PLAYER = pygame.image.load('assets/char.png')
-PLAYER_RED = pygame.image.load('assets/charR2.png')
-PLAYER_BLUE = pygame.image.load('assets/charB2.png')
-HIT_SOUND = pygame.mixer.Sound('assets/hit.wav')
-POINT_SOUND = pygame.mixer.Sound('assets/point.wav')
-WIN_SOUND = pygame.mixer.Sound('assets/sci-fi.wav')
+PLAYER = pygame.image.load(f'{ROOT}char.png')
+PLAYER_RED = pygame.image.load(f'{ROOT}charR2.png')
+PLAYER_BLUE = pygame.image.load(f'{ROOT}charB2.png')
+HIT_SOUND = pygame.mixer.Sound(f'{ROOT}hit.wav')
+POINT_SOUND = pygame.mixer.Sound(f'{ROOT}point.wav')
+WIN_SOUND = pygame.mixer.Sound(f'{ROOT}sci-fi.wav')
 
-pygame.mixer.music.load('assets/welcome.mp3')
+pygame.mixer.music.load(f'{ROOT}welcome.mp3')
 
 # Colors
 WHITE = (255, 255, 255)
@@ -44,12 +45,12 @@ WALL = pygame.Rect(SW/2+5, 0, 10, SH)
 UPWALL = pygame.Rect(0, 0, SW, 10)
 DOWNWALL = pygame.Rect(0, SH-10, SW, 10)
 
-# MIDWALL = pygame.transform.scale(pygame.image.load("assets/wall.png"), (10, SH))
-# BOUNDARY = pygame.transform.scale(pygame.transform.rotate(pygame.image.load("assets/wall.png"), 90), (SW, 10))
+# MIDWALL = pygame.transform.scale(pygame.image.load(f"{ROOT}wall.png"), (10, SH))
+# BOUNDARY = pygame.transform.scale(pygame.transform.rotate(pygame.image.load(f"{ROOT}wall.png"), 90), (SW, 10))
 
 # Ball
 BD = 30
-BALL = pygame.transform.scale(pygame.image.load("assets/ball.png"), (BD, BD))
+BALL = pygame.transform.scale(pygame.image.load(f'{ROOT}ball.png'), (BD, BD))
 BX = 555
 BY = SH/2
 BV = 6

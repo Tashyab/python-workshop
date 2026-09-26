@@ -22,10 +22,11 @@ SC=pygame.display.set_mode((SC_W,SC_H))
 GROUNDY=SC_H*0.8
 GAME_SPRITES={}
 GAME_SOUNDS={}
-PLAYER="equip/sprites/jet_char.png"
-OBSTACLE="equip/sprites/pilliar.png"
-BASE = 'equip/sprites/lava.png'
-BACK="equip/sprites/well3.png"
+ROOT = "D:/Projects/python-workshop/PyGame/jetpack joyride/"
+PLAYER=f"{ROOT}equip/sprites/jet_char.png"
+OBSTACLE=f"{ROOT}equip/sprites/pilliar.png"
+BASE = f'{ROOT}equip/sprites/lava.png'
+BACK=f"{ROOT}equip/sprites/well3.png"
 FONT=pygame.font.SysFont('Algerian', 20)
 FONT2 = pygame.font.SysFont('Algerian', 60)
 FONT3 = pygame.font.SysFont('Algerian', 25)
@@ -34,7 +35,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
-pygame.mixer.music.load("equip/sounds/muse.mp3")
+pygame.mixer.music.load(f"{ROOT}equip/sounds/muse.mp3")
 
 def speak(audio):
     engine.say(audio)
@@ -211,7 +212,7 @@ def player():
     blank_interval = 400
     last_blink_time = 0
 
-    pl = pygame.image.load('equip/sprites/jetpack.png')
+    pl = pygame.image.load(f'{ROOT}equip/sprites/jetpack.png')
     pl = pygame.transform.scale(pl, (pl.get_width()//10, pl.get_height()//10))
     pl_rect = pl.get_rect()
     pl_rect.x = -pl.get_width()//2
@@ -281,7 +282,7 @@ def highScore(score, hslist):
     elif score > hslist[2][1]:
         hslist[2][1] = score
         hslist[2][0] = player()
-    with open("HS.txt", "w") as f:
+    with open(f"{ROOT}HS.txt", "w") as f:
         f.write(f"{hslist[0][0]} {hslist[0][1]}\n{hslist[1][0]} {hslist[1][1]}\n{hslist[2][0]} {hslist[2][1]}")
 
 def Collide(playerx, playery, upperpipes, lowerpipes, score, hslist):
@@ -339,21 +340,21 @@ if __name__=="__main__":
     pygame.display.set_caption("JETPACK JOYRIDE")
     pygame.mixer.music.play()
     GAME_SPRITES['numbers']=(
-        pygame.image.load('equip/sprites/0.png').convert_alpha(),
-        pygame.image.load('equip/sprites/1.png').convert_alpha(),
-        pygame.image.load('equip/sprites/2.png').convert_alpha(),
-        pygame.image.load('equip/sprites/3.png').convert_alpha(),
-        pygame.image.load('equip/sprites/4.png').convert_alpha(),
-        pygame.image.load('equip/sprites/5.png').convert_alpha(),
-        pygame.image.load('equip/sprites/6.png').convert_alpha(),
-        pygame.image.load('equip/sprites/7.png').convert_alpha(),
-        pygame.image.load('equip/sprites/8.png').convert_alpha(),
-        pygame.image.load('equip/sprites/9.png').convert_alpha()
+        pygame.image.load(f'{ROOT}equip/sprites/0.png').convert_alpha(),
+        pygame.image.load(f'{ROOT}equip/sprites/1.png').convert_alpha(),
+        pygame.image.load(f'{ROOT}equip/sprites/2.png').convert_alpha(),
+        pygame.image.load(f'{ROOT}equip/sprites/3.png').convert_alpha(),
+        pygame.image.load(f'{ROOT}equip/sprites/4.png').convert_alpha(),
+        pygame.image.load(f'{ROOT}equip/sprites/5.png').convert_alpha(),
+        pygame.image.load(f'{ROOT}equip/sprites/6.png').convert_alpha(),
+        pygame.image.load(f'{ROOT}equip/sprites/7.png').convert_alpha(),
+        pygame.image.load(f'{ROOT}equip/sprites/8.png').convert_alpha(),
+        pygame.image.load(f'{ROOT}equip/sprites/9.png').convert_alpha()
     ) # (62, 69)
 
     GAME_SPRITES['background']=(
-        pygame.transform.scale(pygame.image.load('equip/sprites/well3.png'), (SC_W*1.5,SC_H*1.2)),
-        pygame.transform.scale(pygame.image.load('equip/sprites/well.png'), (SC_W, SC_H)),
+        pygame.transform.scale(pygame.image.load(f'{ROOT}equip/sprites/well3.png'), (SC_W*1.5,SC_H*1.2)),
+        pygame.transform.scale(pygame.image.load(f'{ROOT}equip/sprites/well.png'), (SC_W, SC_H)),
     )
 
     GAME_SPRITES['message']=GAME_SPRITES['background'][0].convert_alpha()
@@ -364,16 +365,16 @@ if __name__=="__main__":
         pygame.transform.rotate(pygame.image.load(OBSTACLE).convert_alpha(), 180)
     ) # (66, 382)
     try:
-        GAME_SOUNDS['swoosh']=pygame.mixer.Sound('equip/sounds/swoosh.wav')
-        GAME_SOUNDS['crash']=pygame.mixer.Sound('equip/sounds/crash.wav')
-        GAME_SOUNDS['score']=pygame.mixer.Sound('equip/sounds/score.wav')
-        GAME_SOUNDS['explosion']=pygame.mixer.Sound('equip/sounds/explosion.wav')
+        GAME_SOUNDS['swoosh']=pygame.mixer.Sound(f'{ROOT}equip/sounds/swoosh.wav')
+        GAME_SOUNDS['crash']=pygame.mixer.Sound(f'{ROOT}equip/sounds/crash.wav')
+        GAME_SOUNDS['score']=pygame.mixer.Sound(f'{ROOT}equip/sounds/score.wav')
+        GAME_SOUNDS['explosion']=pygame.mixer.Sound(f'{ROOT}equip/sounds/explosion.wav')
     except Exception:
         pass
     
     GAME_SPRITES['player']=pygame.image.load(PLAYER).convert_alpha() # (83, 77)
 
-    with open("HS.txt") as f:
+    with open(f"{ROOT}HS.txt") as f:
         hsfile = f.read()
         hsfile = hsfile.split('\n')
         keys = [i.split()[0] for i in hsfile]
