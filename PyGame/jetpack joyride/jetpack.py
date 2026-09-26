@@ -18,7 +18,13 @@ engine.setProperty('volume', 1.0)
 FPS=38
 SC_H=630
 SC_W=1120
-SC=pygame.display.set_mode((SC_W,SC_H))
+
+# Internal game resolution. All game logic continues to use these dimensions.
+GAME_SURFACE = pygame.Surface((SC_W, SC_H))
+
+# Actual display window. It can now be resized/maximized.
+SC = pygame.display.set_mode((SC_W, SC_H), pygame.RESIZABLE)
+
 GROUNDY=SC_H*0.8
 GAME_SPRITES={}
 GAME_SOUNDS={}
@@ -36,6 +42,33 @@ RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
 pygame.mixer.music.load(f"{ROOT}equip/sounds/muse.mp3")
+
+def update_display():
+    """Scale the fixed-size game surface to the current window size.
+
+    The original 1120x630 aspect ratio is preserved. Any unused area is
+    filled with black bars rather than stretching the game.
+    """
+    window_width, window_height = pygame.display.get_window_size()
+
+    scale = min(window_width / SC_W, window_height / SC_H)
+
+    scaled_width = max(1, int(SC_W * scale))
+    scaled_height = max(1, int(SC_H * scale))
+
+    scaled_surface = pygame.transform.smoothscale(
+        GAME_SURFACE,
+        (scaled_width, scaled_height)
+    )
+
+    SC.fill(BLACK)
+
+    x = (window_width - scaled_width) // 2
+    y = (window_height - scaled_height) // 2
+
+    SC.blit(scaled_surface, (x, y))
+    pygame.display.flip()
+
 
 def speak(audio):
     engine.say(audio)
@@ -64,16 +97,16 @@ def welcomeScreen(hslist):
             last_blink_time = current_time
             is_text_visible = not is_text_visible
 
-        SC.blit(GAME_SPRITES['message'], (0, 0))
-        SC.blit(scores2, ((SC_W-scores2.get_width())//2, 45))
+        GAME_SURFACE.blit(GAME_SPRITES['message'], (0, 0))
+        GAME_SURFACE.blit(scores2, ((SC_W-scores2.get_width())//2, 45))
 
         text_surface = FONT2.render("<Press spacebar to start>", True, WHITE)
         text_rect = text_surface.get_rect(center=(SC_W // 2, SC_H // 2)) 
         if is_text_visible:
-            SC.blit(text_surface, text_rect)
-            SC.blit(scores1, ((SC_W-scores1.get_width())//2, 45))
+            GAME_SURFACE.blit(text_surface, text_rect)
+            GAME_SURFACE.blit(scores1, ((SC_W-scores1.get_width())//2, 45))
 
-        pygame.display.update()
+        update_display()
         fpsclock.tick(FPS)
 
 def mainGame(hs, hslist):
@@ -164,11 +197,11 @@ def mainGame(hs, hslist):
         screen(hs, score, bgx)
         
         for upperpipe,lowerpipe in zip(upperpipes,lowerpipes):
-            SC.blit(GAME_SPRITES['obstacle'][0], (upperpipe['x'], upperpipe['y']))
-            SC.blit(GAME_SPRITES['obstacle'][1], (lowerpipe['x'], lowerpipe['y']))
+            GAME_SURFACE.blit(GAME_SPRITES['obstacle'][0], (upperpipe['x'], upperpipe['y']))
+            GAME_SURFACE.blit(GAME_SPRITES['obstacle'][1], (lowerpipe['x'], lowerpipe['y']))
         
-        SC.blit(GAME_SPRITES['base'], (basex-60,GROUNDY-50))
-        SC.blit(GAME_SPRITES['player'], (playerx,playery))
+        GAME_SURFACE.blit(GAME_SPRITES['base'], (basex-60,GROUNDY-50))
+        GAME_SURFACE.blit(GAME_SPRITES['player'], (playerx,playery))
         
         mydigits= [int(x) for x in list(str(score))]
         width = 0
@@ -176,10 +209,10 @@ def mainGame(hs, hslist):
             width+=GAME_SPRITES['numbers'][digit].get_width()
         xoffset=SC_W-300
         for digit in mydigits:
-            SC.blit(GAME_SPRITES['numbers'][digit],(xoffset, 20))
+            GAME_SURFACE.blit(GAME_SPRITES['numbers'][digit],(xoffset, 20))
             xoffset+=GAME_SPRITES['numbers'][digit].get_width() - 20
         
-        pygame.display.update()
+        update_display()
         fpsclock.tick(FPS)
 
 def screen(hs, score, bgx):
@@ -188,10 +221,10 @@ def screen(hs, score, bgx):
     else:
         sc = hs
 
-    SC.blit(GAME_SPRITES['background'][0], (bgx, 0))
-    SC.blit(GAME_SPRITES['background'][0], (bgx + GAME_SPRITES['background'][0].get_width(), 0))
+    GAME_SURFACE.blit(GAME_SPRITES['background'][0], (bgx, 0))
+    GAME_SURFACE.blit(GAME_SPRITES['background'][0], (bgx + GAME_SPRITES['background'][0].get_width(), 0))
     text=FONT.render(f"High Score: {sc}", 1, BLACK)
-    SC.blit(text,(20,20))
+    GAME_SURFACE.blit(text,(20,20))
         
 def player():
     # Set up input box
@@ -226,10 +259,26 @@ def player():
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
-                if input_box.collidepoint(event.pos):
+                # Convert window coordinates back to the fixed game coordinates.
+                window_width, window_height = pygame.display.get_window_size()
+                scale = min(window_width / SC_W, window_height / SC_H)
+
+                scaled_width = SC_W * scale
+                scaled_height = SC_H * scale
+
+                offset_x = (window_width - scaled_width) / 2
+                offset_y = (window_height - scaled_height) / 2
+
+                game_mouse_pos = (
+                    (event.pos[0] - offset_x) / scale,
+                    (event.pos[1] - offset_y) / scale
+                )
+
+                if input_box.collidepoint(game_mouse_pos):
                     active = not active
                 else:
                     active = False
+
                 color = color_active if active else color_inactive
             if event.type == pygame.KEYDOWN:
                 if active:
@@ -253,23 +302,23 @@ def player():
         congrats1 = FONT3.render("CONGRATULATIONS! Enter Your Name.", True, RED)
         congrats2 = FONT3.render("CONGRATULATIONS! Enter Your Name.", True, BLUE)
         
-        SC.blit(GAME_SPRITES['message'], (0, 0))
-        SC.blit(congrats2, (SC_W//2-congrats1.get_width()//2, 120))
+        GAME_SURFACE.blit(GAME_SPRITES['message'], (0, 0))
+        GAME_SURFACE.blit(congrats2, (SC_W//2-congrats1.get_width()//2, 120))
         if(pl_rect.x>SC_W):
             pl_rect.x = -pl.get_width()//2
         if(pl_rect.y<0):
             pl_rect.y = SC_H-random.choice([i for i in range(0, SC_H, 10)])
     
-        SC.blit(pl, (pl_rect.x, pl_rect.y))
+        GAME_SURFACE.blit(pl, (pl_rect.x, pl_rect.y))
 
         if is_flashing_text:
-            SC.blit(congrats1, (SC_W//2-congrats1.get_width()//2, 120))
+            GAME_SURFACE.blit(congrats1, (SC_W//2-congrats1.get_width()//2, 120))
 
-        pygame.draw.rect(SC, color, input_box, 2)
-        pygame.draw.rect(SC, WHITE, (input_box.x + 3, input_box.y + 3, width - 6, 36))
-        SC.blit(text_surface, (input_box.x+7, input_box.y+7))
+        pygame.draw.rect(GAME_SURFACE, color, input_box, 2)
+        pygame.draw.rect(GAME_SURFACE, WHITE, (input_box.x + 3, input_box.y + 3, width - 6, 36))
+        GAME_SURFACE.blit(text_surface, (input_box.x+7, input_box.y+7))
         input_box.w = max(200, text_surface.get_width()+10)
-        pygame.display.flip()
+        update_display()
         clock.tick(30)
 
 def highScore(score, hslist):
