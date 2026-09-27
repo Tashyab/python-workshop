@@ -116,37 +116,46 @@ class Ball:
         self.y_vel = 0
 
 def handle_collision(pl, pr, bo):
+    cpu_target_y = None
+
     if (bo.y + BD >= SH - 10 or bo.y - bo.rad <= 0):
         bo.y_vel *= -1
     
     if bo.x_vel < 0:
-        if bo.y + bo.rad >=pl.y and bo.y + bo.rad <= pl.y + PH:
-            if (bo.x - bo.rad + 15 <= pl.x + PW and bo.x - bo.rad + 15 >= pl.x + PW*0.9): # offset = 15
+        if bo.y + bo.rad >= pl.y and bo.y + bo.rad <= pl.y + PH:
+            if (bo.x - bo.rad + 15 <= pl.x + PW and bo.x - bo.rad + 15 >= pl.x + PW * 0.9):
                 bo.x_vel *= -1
 
-                midy = pl.y + PH/2
+                midy = pl.y + PH / 2
                 diffy = bo.y - midy
-                red_fact = (PH/2)/BV
-                bo.y_vel = diffy/red_fact
-                if(soundcheck == 1):
-                        HIT_SOUND.play()
+                red_fact = (PH / 2) / BV
+                bo.y_vel = diffy / red_fact
+
+                cpu_target_y = predict_cpu_target(bo)
+
+                if soundcheck == 1:
+                    HIT_SOUND.play()
 
     else:
-        if bo.y +bo.rad >= pr.y and bo.y + bo.rad <= pr.y + PH:
-            if (bo.x + bo.rad + 15 >= pr.x and bo.x + bo.rad + 15 <= pr.x + PW*0.1):
+        if bo.y + bo.rad >= pr.y and bo.y + bo.rad <= pr.y + PH:
+            if (bo.x + bo.rad + 15 >= pr.x and bo.x + bo.rad + 15 <= pr.x + PW * 0.1):
                 bo.x_vel *= -1
 
-                midy = pr.y + PH/2
+                midy = pr.y + PH / 2
                 diffy = bo.y - midy
-                red_fact = (PH/2)/BV
-                bo.y_vel = diffy/red_fact
-                if(soundcheck == 1):
-                        HIT_SOUND.play()
+                red_fact = (PH / 2) / BV
+                bo.y_vel = diffy / red_fact
+
+                if soundcheck == 1:
+                    HIT_SOUND.play()
+
+    return cpu_target_y
 
 def welcomeScreen():
     if(not pygame.mixer.music.get_busy()):
         pygame.mixer.music.play()
-    text = FONT.render("<Press spacebar to start>", 1, WHITE)
+    text1 = FONT.render("Press <SPACE>  Player vs Player", 1, WHITE)
+    text2 = FONT.render("Press <CTRL + SPACE>  Player vs CPU", 1, WHITE)
     clock = pygame.time.Clock()
     blink_interval = 400
     last_blink_time = 0
@@ -166,7 +175,9 @@ def welcomeScreen():
                 elif event.key == pygame.K_RETURN and pygame.key.get_mods() & pygame.KMOD_ALT:
                     toggle_fullscreen()
                 elif event.key == pygame.K_SPACE:
-                    return
+                    if pygame.key.get_mods() & pygame.KMOD_CTRL:
+                        return True
+                    return False
 
         # Blinking logic
         current_time = pygame.time.get_ticks()
@@ -180,7 +191,8 @@ def welcomeScreen():
 
         # Blinking
         if is_text_visible:
-            GAME_SURFACE.blit(text, (225, 50))
+            GAME_SURFACE.blit(text1, (SW//2 - text1.get_width()//2, 50))
+            GAME_SURFACE.blit(text2, (SW//2 - text2.get_width()//2, 110))
             GAME_SURFACE.blit(PLAYER_BLUE, (50, SH/2-50))
             GAME_SURFACE.blit(pygame.transform.flip(PLAYER_RED, True, False), (800, SH/2-50))
 
@@ -199,15 +211,47 @@ def draw_screen(pl, pr, bo, plsc, prsc ):
     pygame.draw.rect(GAME_SURFACE, (244,140,6), WALL)
     pygame.draw.rect(GAME_SURFACE, (244,140,6), UPWALL)
     pygame.draw.rect(GAME_SURFACE, (244,140,6), DOWNWALL)
-    # SC.blit(MIDWALL, (SW/2+5, 0))
-    # SC.blit(BOUNDARY, (0, 0))
-    # SC.blit(BOUNDARY, (0, SH-10))
     GAME_SURFACE.blit(P1, (pl.x, pl.y))
     GAME_SURFACE.blit(P2, (pr.x, pr.y))
     GAME_SURFACE.blit(BALL, (bo.x, bo.y))
     update_display()
 
-def game():
+def predict_cpu_target(bo):
+    target_x = SW - 100 - PW
+    distance = target_x - bo.x
+
+    if bo.x_vel > 0 and distance > 0:
+        time_to_reach = distance / bo.x_vel
+        predicted_y = bo.y + bo.y_vel * time_to_reach
+
+        height = SH - BD
+        predicted_y %= height * 2
+
+        if predicted_y > height:
+            predicted_y = height * 2 - predicted_y
+
+        return predicted_y
+
+    return SH / 2
+
+def cpu_move(pr, cpu_target_y, cpu_target_x):
+    cpu_speed = 5
+    dead_zone = 20
+
+    if pr.centerx < cpu_target_x - 10:
+        pr.x += cpu_speed
+    elif pr.centerx > cpu_target_x + 10:
+        pr.x -= cpu_speed
+
+    if pr.centery < cpu_target_y - dead_zone:
+        pr.y += cpu_speed
+    elif pr.centery > cpu_target_y + dead_zone:
+        pr.y -= cpu_speed
+
+    pr.x = max(WALL.x + 10, min(pr.x, SW - PW - 30))
+    pr.y = max(10, min(pr.y, SH - PH - 10))
+
+def game(cpu=False):
     pygame.mixer.music.rewind()
     clock = pygame.time.Clock()
     pl = pygame.Rect(100, SH/2-PH/2, PW, PH)
@@ -215,11 +259,17 @@ def game():
     bo = Ball(BX, BY, BD//2)
     plsc = 0
     prsc = 0
+    cpu_target_y = SH / 2
+    cpu_target_x = SW - 100 - PW
     run = True
     while run:
         if(not pygame.mixer.music.get_busy()):
             pygame.mixer.music.play()
         clock.tick(FPS)
+
+        if cpu and random.randint(1, 45) == 1:
+            cpu_target_x = random.randint(SW - 100 - PW - 100, SW - 100 - PW + 60)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
@@ -242,14 +292,17 @@ def game():
         if press[pygame.K_d] and (pl.x+PW+5 < WALL.x):
             pl.x += PV
 
-        if press[pygame.K_UP] and (pr.y > 10):
-            pr.y -= PV
-        if press[pygame.K_DOWN] and (pr.y+PH < SH-10):
-            pr.y += PV
-        if press[pygame.K_LEFT] and (pr.x > WALL.x+10):
-            pr.x -= PV
-        if press[pygame.K_RIGHT] and (pr.x+PW-30 < SW):
-            pr.x += PV
+        if cpu:
+            cpu_move(pr, cpu_target_y, cpu_target_x)
+        else:
+            if press[pygame.K_UP] and (pr.y > 10):
+                pr.y -= PV
+            if press[pygame.K_DOWN] and (pr.y+PH < SH-10):
+                pr.y += PV
+            if press[pygame.K_LEFT] and (pr.x > WALL.x+10):
+                pr.x -= PV
+            if press[pygame.K_RIGHT] and (pr.x+PW-30 < SW):
+                pr.x += PV
 
         if(bo.x > SW): 
             plsc += 1
@@ -257,7 +310,7 @@ def game():
                 POINT_SOUND.play()
             bo.reset(pl.y + PH / 2 - BD / 2)
 
-        if(bo.x < 0): 
+        if(bo.x < -80): 
             prsc += 1
             if(soundcheck == 1):
                 POINT_SOUND.play()
@@ -294,22 +347,16 @@ def game():
                 update_display()
             return
 
-            count = 0
-            pl.x = 100
-            pl.y = SH/2-PH/2
-            pr.x = SW-100-PW
-            pr.y = SH/2-PH/2
-            prsc = 0
-            plsc = 0
-            bo.reset()
-
         bo.move()
-        handle_collision(pl, pr, bo)
+        new_target = handle_collision(pl, pr, bo)
+
+        if new_target is not None:
+            cpu_target_y = new_target
         draw_screen(pl, pr, bo, plsc, prsc)
 
 
 if __name__ == "__main__":
     pygame.mixer.music.play()
     while(True):
-        welcomeScreen()
-        game()
+        cpu = welcomeScreen()
+        game(cpu)
