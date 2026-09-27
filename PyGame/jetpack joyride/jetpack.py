@@ -78,10 +78,16 @@ def welcomeScreen(hslist):
     blink_interval = 400
     last_blink_time = 0
     is_text_visible = True
-    scores1 = FONT3.render(f"1. {hslist[0][0]}:   {hslist[0][1]}                2. {hslist[1][0]}:   {hslist[1][1]}                3. {hslist[2][0]}:   {hslist[2][1]}",
-                           True, RED)
-    scores2 = FONT3.render(f"1. {hslist[0][0]}:   {hslist[0][1]}                2. {hslist[1][0]}:   {hslist[1][1]}                3. {hslist[2][0]}:   {hslist[2][1]}",
-                           True, BLUE)
+    score_text = ""
+
+    for i, entry in enumerate(hslist):
+        if i > 0:
+            score_text += "                "
+
+        score_text += f"{i + 1}. {entry[0]}:   {entry[1]}"
+
+    scores1 = FONT3.render(score_text, True, RED)
+    scores2 = FONT3.render(score_text, True, BLUE)
     while True:
         for event in pygame.event.get():
             if event.type == QUIT or (event.type == KEYDOWN and event.key == K_ESCAPE):
@@ -120,15 +126,21 @@ def mainGame(hs, hslist):
     newpipe1=getRandomPipe()
     newpipe2=getRandomPipe()
 
-    upperpipes= [
-        {'x':SC_W+100,'y':newpipe1[0]['y']},
-        {'x':SC_W+100+(SC_W/2),'y':newpipe2[0]['y']}
+    upperpipes = [
+        {'x': SC_W + 100, 'y': newpipe1[0]['y'], 'scored': False},
+        {'x': SC_W + 100 + (SC_W / 2), 'y': newpipe2[0]['y'], 'scored': False}
     ]
     lowerpipes= [
         {'x':SC_W+100,'y':newpipe1[1]['y']}, 
         {'x':SC_W+100+(SC_W/2),'y':newpipe2[1]['y']}
     ]
-    pipevelx= -5
+    
+    # Obstacle speed
+    pipe_start_speed = 5.0
+    pipe_max_speed = 10.0
+    pipe_speed_increase = 0.25
+    pipe_speed_interval = 2
+
     playervely= -9
     playermaxvely=10
     playerminvely= -8
@@ -160,10 +172,13 @@ def mainGame(hs, hslist):
             return True
 
         playermidpos= playerx + GAME_SPRITES['player'].get_width()/2
+        pipe_width = GAME_SPRITES['obstacle'][0].get_width()
+
         for pipe in upperpipes:
-            pipemidpos=pipe['x'] + GAME_SPRITES['obstacle'][0].get_width()/2
-            if pipemidpos <= playermidpos < pipemidpos+4:
-                score+=1
+            if not pipe['scored'] and pipe['x'] + pipe_width < playerx:
+                score += 1
+                pipe['scored'] = True
+
                 try:
                     GAME_SOUNDS['score'].play()
                 except Exception:
@@ -178,12 +193,23 @@ def mainGame(hs, hslist):
         playerh= GAME_SPRITES['player'].get_height()
         playery = playery + playervely
 
+        # Increase obstacle speed every 5 points
+        speed_level = score // pipe_speed_interval
+        pipe_speed = min(
+            pipe_start_speed + speed_level * pipe_speed_increase,
+            pipe_max_speed
+        )
+
+        pipevelx = -pipe_speed
         for upperpipe, lowerpipe in zip(upperpipes,lowerpipes):
             upperpipe['x']+= pipevelx
             lowerpipe['x']+= pipevelx
 
-        if 0<upperpipes[0]['x'] <10:
-            newpipe=getRandomPipe()
+        # Add a new pipe when the last pipe has moved far enough left
+        pipe_gap = SC_W / 2.2
+
+        if upperpipes[-1]['x'] < SC_W - pipe_gap:
+            newpipe = getRandomPipe()
             upperpipes.append(newpipe[0])
             lowerpipes.append(newpipe[1])
 
@@ -191,7 +217,7 @@ def mainGame(hs, hslist):
             upperpipes.pop(0)
             lowerpipes.pop(0)
     
-        bgx -= 2
+        bgx -= pipe_speed * 0.4
         if bgx < -GAME_SPRITES['background'][0].get_width():
             bgx = 0
         screen(hs, score, bgx)
@@ -202,15 +228,24 @@ def mainGame(hs, hslist):
         
         GAME_SURFACE.blit(GAME_SPRITES['base'], (basex-60,GROUNDY-50))
         GAME_SURFACE.blit(GAME_SPRITES['player'], (playerx,playery))
-        
-        mydigits= [int(x) for x in list(str(score))]
-        width = 0
-        for digit in mydigits: 
-            width+=GAME_SPRITES['numbers'][digit].get_width()
-        xoffset=SC_W-300
-        for digit in mydigits:
-            GAME_SURFACE.blit(GAME_SPRITES['numbers'][digit],(xoffset, 20))
-            xoffset+=GAME_SPRITES['numbers'][digit].get_width() - 20
+
+        # Legacy sprite based scores
+        # mydigits= [int(x) for x in list(str(score))]
+        # width = 0
+        # for digit in mydigits: 
+        #     width+=GAME_SPRITES['numbers'][digit].get_width()
+        # xoffset=SC_W-300
+        # for digit in mydigits:
+        #     GAME_SURFACE.blit(GAME_SPRITES['numbers'][digit],(xoffset, 20))
+        #     xoffset+=GAME_SPRITES['numbers'][digit].get_width() - 20
+
+        score_font = pygame.font.SysFont("Algerian", 56, bold=True)
+        score_text = score_font.render(str(score), True, BLACK)
+
+        score_rect = score_text.get_rect()
+        score_rect.topright = (SC_W - 30, 20)
+
+        GAME_SURFACE.blit(score_text, score_rect)
         
         update_display()
         fpsclock.tick(FPS)
@@ -322,17 +357,19 @@ def player():
         clock.tick(30)
 
 def highScore(score, hslist):
-    if score > hslist[0][1]:
-        hslist[0][1] = score
-        hslist[0][0] = player()
-    elif score > hslist[1][1]:
-        hslist[1][1] = score
-        hslist[1][0] = player()
-    elif score > hslist[2][1]:
-        hslist[2][1] = score
-        hslist[2][0] = player()
-    with open(f"{ROOT}HS.txt", "w") as f:
-        f.write(f"{hslist[0][0]} {hslist[0][1]}\n{hslist[1][0]} {hslist[1][1]}\n{hslist[2][0]} {hslist[2][1]}")
+    if len(hslist) < 3 or score > hslist[-1][1]:
+        name = player()
+        hslist.append([name, score])
+
+        hslist.sort(key=lambda x: x[1], reverse=True)
+
+        # Keep only the top 3
+        del hslist[3:]
+
+        # Save the updated leaderboard
+        with open(f"{ROOT}HS.txt", "w") as f:
+            for name, score in hslist:
+                f.write(f"{name} {score}\n")
 
 def Collide(playerx, playery, upperpipes, lowerpipes, score, hslist):
     playerh=GAME_SPRITES['player'].get_height()
@@ -370,17 +407,24 @@ def Collide(playerx, playery, upperpipes, lowerpipes, score, hslist):
                 pass
             highScore(score, hslist)
             return True
-
+        
 def getRandomPipe():
-    pipeh= GAME_SPRITES['obstacle'][0].get_height()
-    offset= SC_W/5
-    y2= offset+ random.randrange(0, int(SC_H - GAME_SPRITES['base'].get_height()-offset))
-    pipex= SC_W + 10
-    y1= pipeh - y2 + offset
-    pipe=[
-        {'x':pipex, 'y':-y1},  #upper pipe
-        {'x':pipex, 'y':y2}    #lower pipe 
+    pipeh = GAME_SPRITES['obstacle'][0].get_height()
+    offset = SC_W / 5
+
+    y2 = offset + random.randrange(
+        0,
+        int(SC_H - GAME_SPRITES['base'].get_height() - offset)
+    )
+
+    pipex = SC_W + 10
+    y1 = pipeh - y2 + offset
+
+    pipe = [
+        {'x': pipex, 'y': -y1, 'scored': False},
+        {'x': pipex, 'y': y2}
     ]
+
     return pipe
 
 if __name__=="__main__":
@@ -423,13 +467,27 @@ if __name__=="__main__":
     
     GAME_SPRITES['player']=pygame.image.load(PLAYER).convert_alpha() # (83, 77)
 
-    with open(f"{ROOT}HS.txt") as f:
-        hsfile = f.read()
-        hsfile = hsfile.split('\n')
-        keys = [i.split()[0] for i in hsfile]
-        values = list(map(int, [i.split()[-1] for i in hsfile]))
-        hslist = [[keys[i], values[i]] for i in range(3)]
-        hs = hslist[0][1]
+    hslist = []
+
+    try:
+        with open(f"{ROOT}HS.txt") as f:
+            for line in f:
+                parts = line.split()
+
+                if len(parts) >= 2:
+                    name = parts[0]
+                    score = int(parts[-1])
+                    hslist.append([name, score])
+
+    except FileNotFoundError:
+        pass
+
+    # Keep only the top 3 scores
+    hslist.sort(key=lambda x: x[1], reverse=True)
+    hslist = hslist[:3]
+
+    # No high score yet
+    hs = hslist[0][1] if hslist else 0
 
     while(True):
         welcomeScreen(hslist)
